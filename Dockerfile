@@ -1,12 +1,9 @@
 FROM node:10
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /app
+WORKDIR /app
 
-COPY . /usr/src/app/
+COPY package.json /app
 RUN yarn
 
-EXPOSE 3000
-
-CMD ["yarn","start"]
-
+COPY . /code/
