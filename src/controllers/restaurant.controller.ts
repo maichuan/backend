@@ -10,7 +10,7 @@ export const getRestaurants = async (
   try {
     const restaurants = await Restaurants.findAll()
 
-    return res.json(restaurants)
+    return res.json({ restaurants })
   } catch (e) {
     console.log(e)
   }
