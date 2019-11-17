@@ -10,5 +10,5 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.indexWelcome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.json('Welcome to my ts node!!!');
+    return res.json('Welcome to my ts node!');
 });

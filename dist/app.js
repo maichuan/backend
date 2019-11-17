@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const restaurant_routes_1 = __importDefault(require("./routes/restaurant.routes"));
+const database_1 = require("./database");
 class App {
     constructor(port) {
         this.port = port;
@@ -28,8 +29,9 @@ class App {
         this.app.set('port', this.port || process.env.PORT || 3000);
     }
     middlewares() {
+        this.app.use(express_1.default.json());
+        this.app.use(express_1.default.urlencoded({ extended: false }));
         this.app.use(morgan_1.default('dev'));
-        // this.app.use(express.urlencoded({ extended: false }))
         this.app.use(express_1.default.json());
     }
     routes() {
@@ -38,6 +40,7 @@ class App {
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {
+            yield database_1.sequelize.sync();
             yield this.app.listen(this.app.get('port'));
             console.log('Server on port', this.app.get('port'));
         });

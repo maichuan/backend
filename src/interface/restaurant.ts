@@ -1,7 +1,7 @@
 export interface Restaurant {
   id?: string
-  name: string
+  title: string
   description: string
-  image_url: string
-  created_at: Date
+  imgUrl: string
+  created_at?: Date
 }

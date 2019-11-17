@@ -8,13 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = require("../database");
+const Restaurants_1 = __importDefault(require("../models/Restaurants"));
 exports.getRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const conn = yield database_1.connect();
-        const restaurants = yield conn.query('SELECT * FROM restaurants');
-        return res.json(restaurants[0]);
+        const restaurants = yield Restaurants_1.default.findAll();
+        return res.json(restaurants);
     }
     catch (e) {
         console.log(e);
@@ -22,30 +24,32 @@ exports.getRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newRestaurant = req.body;
-    const con = yield database_1.connect();
-    yield con.query('Insert into restaurants set ?', [newRestaurant]);
-    return res.json({
-        message: 'Restaurant Created',
-    });
+    console.log(newRestaurant);
+    try {
+        yield Restaurants_1.default.create(newRestaurant);
+        return res.json({
+            message: 'Restaurant Created',
+        });
+    }
+    catch (e) {
+        return res.json({
+            message: 'Error: ' + e,
+        });
+    }
 });
 exports.getRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const con = yield database_1.connect();
-    const restaurant = yield con.query('select * from restaurants where id = ?', [
-        id,
-    ]);
-    return res.json(restaurant[0]);
+    const restaurant = yield Restaurants_1.default.findByPk(id);
+    return res.json(restaurant);
 });
 exports.deleteRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const con = yield database_1.connect();
-    yield con.query('delete from restaurants where id = ?', [id]);
+    yield Restaurants_1.default.destroy({ where: { id } });
     return res.json({ message: 'restaurant deleted' });
 });
 exports.updateRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     const restaurant = req.body;
-    const con = yield database_1.connect();
-    yield con.query('update restaurant set ? where id = ?', [restaurant, id]);
+    yield Restaurants_1.default.update(restaurant, { where: { id } });
     return res.json({ message: 'restaurant updated' });
 });

@@ -1,5 +1,5 @@
-import { Request, Response } from 'express'
-import { connect } from '../database'
+import { Request, Response, NextFunction } from 'express'
+import Restaurants from '../models/Restaurants'
 
 import { Restaurant } from '../interface/restaurant'
 
@@ -8,9 +8,9 @@ export const getRestaurants = async (
   res: Response,
 ): Promise<Response | void> => {
   try {
-    const conn = await connect()
-    const restaurants = await conn.query('SELECT * FROM restaurants')
-    return res.json(restaurants[0])
+    const restaurants = await Restaurants.findAll()
+
+    return res.json(restaurants)
   } catch (e) {
     console.log(e)
   }
@@ -18,13 +18,18 @@ export const getRestaurants = async (
 
 export const createRestaurant = async (req: Request, res: Response) => {
   const newRestaurant: Restaurant = req.body
-  const con = await connect()
+  console.log(newRestaurant)
 
-  await con.query('Insert into restaurants set ?', [newRestaurant])
-
-  return res.json({
-    message: 'Restaurant Created',
-  })
+  try {
+    await Restaurants.create(newRestaurant)
+    return res.json({
+      message: 'Restaurant Created',
+    })
+  } catch (e) {
+    return res.json({
+      message: 'Error: ' + e,
+    })
+  }
 }
 
 export const getRestaurant = async (
@@ -32,12 +37,9 @@ export const getRestaurant = async (
   res: Response,
 ): Promise<Response> => {
   const id = req.params.id
-  const con = await connect()
-  const restaurant = await con.query('select * from restaurants where id = ?', [
-    id,
-  ])
+  const restaurant = await Restaurants.findByPk(id)
 
-  return res.json(restaurant[0])
+  return res.json(restaurant)
 }
 
 export const deleteRestaurant = async (
@@ -45,8 +47,7 @@ export const deleteRestaurant = async (
   res: Response,
 ): Promise<Response> => {
   const id = req.params.id
-  const con = await connect()
-  await con.query('delete from restaurants where id = ?', [id])
+  await Restaurants.destroy({ where: { id } })
 
   return res.json({ message: 'restaurant deleted' })
 }
@@ -57,8 +58,7 @@ export const updateRestaurant = async (
 ): Promise<Response> => {
   const id = req.params.id
   const restaurant = req.body
-  const con = await connect()
-  await con.query('update restaurant set ? where id = ?', [restaurant, id])
+  await Restaurants.update(restaurant, { where: { id } })
 
   return res.json({ message: 'restaurant updated' })
 }
