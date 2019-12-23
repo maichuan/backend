@@ -4,32 +4,34 @@ import {
   Model,
   CreatedAt,
   PrimaryKey,
-  DataType,
   AutoIncrement,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
-import Users from './Users'
 
 @Table
-export default class Restaurants extends Model<Restaurants> {
+export default class Users extends Model<Users> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id!: number
 
   @Column
-  name!: string
-
-  @Column(DataType.TEXT)
-  address!: string
+  email!: string
 
   @Column
-  phoneno!: string
+  password!: string
 
-  @ForeignKey(() => Users)
   @Column
-  ownerId!: number
+  username!: string
+
+  @Column
+  gmailToken?: string
+
+  @Column
+  facebookToken?: string
+
+  @Column
+  role?: number
 
   @CreatedAt
   @Column
