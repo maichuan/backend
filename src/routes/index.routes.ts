@@ -4,6 +4,7 @@ import { signUp, login, logout } from '../controllers/user.controller'
 const router = Router()
 
 router.route('/').get(indexWelcome)
+router.route('/welcome').get(indexWelcome)
 
 router.route('/login').post(login)
 router.route('/signup').post(signUp)

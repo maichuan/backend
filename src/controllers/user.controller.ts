@@ -102,7 +102,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
   }
 }
 
-export const logput = async (
+export const logout = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {

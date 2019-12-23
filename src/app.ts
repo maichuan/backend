@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 
 import IndexRoute from './routes/index.routes'
 import RestaurantRoute from './routes/restaurant.routes'
+import PaymentRoute from './routes/payment.routes'
 import { sequelize } from './database'
 
 export default class App {
@@ -30,6 +31,7 @@ export default class App {
   public routes() {
     this.app.use(IndexRoute)
     this.app.use('/restaurants', RestaurantRoute)
+    this.app.use('/payment', PaymentRoute)
   }
 
   public async listen() {
