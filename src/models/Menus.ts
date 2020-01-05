@@ -31,7 +31,7 @@ export default class Menus extends Model<Menus> {
   @Column(DataType.TEXT)
   description?: string
 
-  @Column(DataType.ENUM)
+  @Column
   status!: number
 
   @Column(DataType.TEXT)
