@@ -10,11 +10,72 @@ import {
 
 const router = Router()
 
+// Restaurants API
+// GET /restaurants
+// const body = {
+//   restuarants: [
+//     {
+//       imgURl: 'www.dnvjkdnvjnlmkvkdl.com',
+//       name: 'Kong Restaurant',
+//       lat: 13,
+//       long: 100,
+//     },
+//     {
+//       imgURl: 'www.dnvjkdnvjnlmkvkdl.com',
+//       name: 'Kong Restaurant',
+//       lat: 13,
+//       long: 100,
+//     },
+//   ],
+// }
+// POST
+// const reqBody = {
+//   name: 'Kong',
+//   lat: 13,
+//   long: 100,
+//   imageUrl: 'www.dnvjkdnvjnlmkvkdl.com',
+//   address: 'ban kong',
+//   phoneno: 0840932489,
+//   ownnerId: 1,
+// }
+// const body = {
+//   message: 'success',
+// }
 router
   .route('/')
   .get(getRestaurants)
   .post(createRestaurant)
 
+// Restaurant API
+// GET /restaurant
+// const body = {
+//   restuarant: {
+//       imgURl: 'www.dnvjkdnvjnlmkvkdl.com',
+//       name: 'Kong Restaurant',
+//       lat: 13,
+//       long: 100,
+//     }
+// }
+// PUT
+// const reqBody = {
+//   name: 'Kong',
+//   lat: 13,
+//   long: 100,
+//   imageUrl: 'www.dnvjkdnvjnlmkvkdl.com',
+//   address: 'ban kong',
+//   phoneno: 0840932489,
+//   ownnerId: 1,
+// }
+// const body = {
+//   message: 'success',
+// }
+// DELETE
+// const reqBody = {
+// id: 1
+// }
+// const body = {
+//   message: 'success',
+// }
 router
   .route('/:id')
   .get(getRestaurant)

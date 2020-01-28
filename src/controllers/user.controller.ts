@@ -4,10 +4,7 @@ import { User, PasswordCompare } from '../interface/User'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-export const signUp = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
+export const signUp = async (req: Request, res: Response) => {
   if (!req.body.username || !req.body.password || !req.body.email) {
     return res.json({
       message: 'Please provide a username, email and a password.',
