@@ -9,7 +9,7 @@ services:
     restart: always
     container_name: mysql-maichaun
     ports: 
-      - '3306:33060'
+      - '3307:33060'
     environment:
       MYSQL_ROOT_PASSWORD: password
 
