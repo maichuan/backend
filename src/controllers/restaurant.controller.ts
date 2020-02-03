@@ -18,7 +18,7 @@ export const getRestaurants = async (
 
 export const createRestaurant = async (req: Request, res: Response) => {
   const newRestaurant: Restaurant = req.body
-  console.log(newRestaurant)
+  console.log('REQ', req.body)
 
   try {
     await Restaurants.create(newRestaurant)

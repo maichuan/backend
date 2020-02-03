@@ -38,4 +38,13 @@ export default class Restaurants extends Model<Restaurants> {
   @UpdatedAt
   @Column
   updatedAt!: Date
+
+  @Column
+  imgURL!: string
+
+  @Column(DataType.DECIMAL(9, 6))
+  lat!: number
+
+  @Column(DataType.DECIMAL(9, 6))
+  long!: number
 }

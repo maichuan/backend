@@ -40,7 +40,7 @@ export default class App {
   }
 
   public async listen() {
-    await sequelize.sync()
+    await sequelize.sync({ alter: true })
     await this.app.listen(this.app.get('port'))
     console.log('Server on port', this.app.get('port'))
   }
