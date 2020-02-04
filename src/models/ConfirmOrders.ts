@@ -9,36 +9,30 @@ import {
   ForeignKey,
   DataType,
 } from 'sequelize-typescript'
-import Restaurants from './Restaurants'
+import Users from './Users'
+import Menus from './Menus'
 
 @Table
-export default class Menus extends Model<Menus> {
+export default class ConfirmOrders extends Model<ConfirmOrders> {
   @PrimaryKey
   @AutoIncrement
   @Column
   id!: number
 
-  @ForeignKey(() => Restaurants)
+  @ForeignKey(() => Users)
   @Column
-  restaurantId!: number
+  uid!: string
 
+  @ForeignKey(() => Menus)
   @Column
   name!: string
 
+  @ForeignKey(() => Menus)
   @Column
   price!: number
 
-  @Column(DataType.TEXT)
-  description?: string
-
   @Column
-  status!: number
-
-  @Column(DataType.TEXT)
-  question?: string
-
-  @Column
-  imgURL?: string
+  status?: string
 
   @CreatedAt
   @Column

@@ -8,6 +8,8 @@ import {
   updateRestaurant,
 } from '../controllers/restaurant.controller'
 
+import { getMenu, postMenu } from '../controllers/menu.controller'
+
 const router = Router()
 
 // Restaurants API
@@ -46,6 +48,10 @@ router
   .get(getRestaurants)
   .post(createRestaurant)
 
+router
+  .route('/:id/menus')
+  .post(postMenu)
+  .get(getMenu)
 // Restaurant API
 // GET /restaurant
 // const body = {

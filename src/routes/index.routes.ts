@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { indexWelcome } from '../controllers/index.controller'
-import { signUp, login, logout } from '../controllers/user.controller'
+// import { signUp, login, logout } from '../controllers/user.controller'
 const router = Router()
 
 router.route('/').get(indexWelcome)
@@ -27,7 +27,7 @@ router.route('/welcome').get(indexWelcome)
 //   name: 'Kong',
 //   TBA
 // }
-router.route('/login').post(login)
+// router.route('/login').post(login)
 
 // Sign up API
 // const reqBody = {
@@ -40,10 +40,10 @@ router.route('/login').post(login)
 //   name: 'Kong',
 //   TBA
 // }
-router.route('/signup').post(signUp)
+// router.route('/signup').post(signUp)
 
 // Log out API
 // const body = { status: success } อาจจะไม่ต้องมีให้ firebase ทำให้
-router.route('/logout').post(logout)
+// router.route('/logout').post(logout)
 
 export default router

@@ -7,6 +7,8 @@ import RestaurantRoute from './routes/restaurant.routes'
 import PaymentRoute from './routes/payment.routes'
 import MeRoute from './routes/me.routes'
 import MenuRoute from './routes/menu.routes'
+import User from './routes/user.routes'
+import Order from './routes/order.routes'
 
 import { sequelize } from './database'
 
@@ -37,6 +39,8 @@ export default class App {
     this.app.use('/payment', PaymentRoute)
     this.app.use('/me', MeRoute)
     this.app.use('/menu', MenuRoute)
+    this.app.use('/user', User)
+    this.app.use('/order', Order)
   }
 
   public async listen() {
