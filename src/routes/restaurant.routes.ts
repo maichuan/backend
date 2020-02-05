@@ -48,10 +48,9 @@ router
   .get(getRestaurants)
   .post(createRestaurant)
 
-router
-  .route('/:id/menus')
-  .post(postMenu)
-  .get(getMenu)
+router.route('/:id/menus').post(postMenu)
+// .get(getMenu)
+
 // Restaurant API
 // GET /restaurant
 // const body = {

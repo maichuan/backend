@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import Restaurants from '../models/Restaurants'
 
 import { Restaurant } from '../interface/restaurant'
+import Menus from '../models/Menus'
 
 export const getRestaurants = async (
   req: Request,
@@ -38,8 +39,17 @@ export const getRestaurant = async (
 ): Promise<Response> => {
   const id = req.params.id
   const restaurant = await Restaurants.findByPk(id)
-
-  return res.json(restaurant)
+  const menus = await Menus.findAll({
+    where: {
+      restaurantId: id,
+    },
+  })
+  const test = { restaurant }
+  console.log(JSON.stringify(restaurant))
+  return res.json({
+    ...JSON.parse(JSON.stringify(restaurant)),
+    menus,
+  })
 }
 
 export const deleteRestaurant = async (
