@@ -3,6 +3,7 @@ import Restaurants from '../models/Restaurants'
 
 import { Restaurant } from '../interface/restaurant'
 import Menus from '../models/Menus'
+import OrderStatistics from '../models/OrderStatistics'
 
 export const getRestaurants = async (
   req: Request,
@@ -71,4 +72,17 @@ export const updateRestaurant = async (
   await Restaurants.update(restaurant, { where: { id } })
 
   return res.json({ message: 'restaurant updated' })
+}
+
+export const updateStat = async (req: Request, res: Response) => {
+  const id = req.query
+  // Brb
+  const restaurant = await OrderStatistics.findAll({
+    where: { restaurantId: id },
+  })
+  await OrderStatistics.update(restaurant, {
+    where: {},
+  })
+  //  Brb
+  return res.json({ message: 'statRes updated' })
 }

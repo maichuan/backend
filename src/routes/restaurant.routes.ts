@@ -51,6 +51,15 @@ router
 router.route('/:id/menus').post(postMenu)
 // .get(getMenu)
 
+router
+  .route('/:id/:roomId')
+  .get()
+  .post()
+
+router
+  .route('/statistic')
+  .get()
+  .post()
 // Restaurant API
 // GET /restaurant
 // const body = {

@@ -25,14 +25,10 @@ export default class ConfirmOrders extends Model<ConfirmOrders> {
 
   @ForeignKey(() => Menus)
   @Column
-  name!: string
-
-  @ForeignKey(() => Menus)
-  @Column
-  price!: number
+  menuId!: number
 
   @Column
-  status?: string
+  status!: number
 
   @CreatedAt
   @Column
