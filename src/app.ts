@@ -9,6 +9,8 @@ import MeRoute from './routes/me.routes'
 import MenuRoute from './routes/menu.routes'
 import User from './routes/user.routes'
 import Order from './routes/order.routes'
+import Search from './routes/search.route'
+import History from './routes/history.route'
 
 import { sequelize } from './database'
 
@@ -41,6 +43,8 @@ export default class App {
     this.app.use('/menu', MenuRoute)
     this.app.use('/user', User)
     this.app.use('/order', Order)
+    this.app.use('/search', Search)
+    this.app.use('/history', History)
   }
 
   public async listen() {

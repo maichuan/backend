@@ -17,6 +17,9 @@ export default class Users extends Model<Users> {
   id!: number
 
   @Column
+  username!: string
+
+  @Column
   uid!: string
 
   @CreatedAt
