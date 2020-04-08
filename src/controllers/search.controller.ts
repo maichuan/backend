@@ -20,15 +20,3 @@ export const getWord = async (req: Request, res: Response) => {
   const word = req.query.q
   return res.json(req.query.q)
 }
-
-// export const getSearch = async (req: Request, res: Response) => {
-//     const q = req.query.q
-//     const search = await Restaurants.findAll({
-//         where: {
-//             name: {
-//                 $like: '%' + q + '%'
-//             }
-//         }
-//     })
-//     return res.json(search)
-// }
