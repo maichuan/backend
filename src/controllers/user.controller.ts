@@ -33,14 +33,12 @@ export const signUp = async (req: Request, res: Response) => {
 
 export const findUser = async (req: Request, res: Response) => {
   const uid = req.params.id
-  console.log(uid)
 
   try {
     const user = await Users.findOne({
       where: { uid },
       raw: true,
     })
-    console.log(user)
 
     return res.json({ user })
   } catch (e) {
