@@ -9,7 +9,6 @@ import {
   ForeignKey,
 } from 'sequelize-typescript'
 import Restaurants from './Restaurants'
-import Menus from './Menus'
 import Users from './Users'
 import Transactions from './Transactions'
 
@@ -23,10 +22,6 @@ export default class Orders extends Model<Orders> {
   @ForeignKey(() => Restaurants)
   @Column
   restaurantId!: number
-
-  @ForeignKey(() => Menus)
-  @Column
-  menuId?: number
 
   @ForeignKey(() => Users)
   @Column

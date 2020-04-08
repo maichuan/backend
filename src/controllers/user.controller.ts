@@ -3,14 +3,14 @@ import Users from '../models/Users'
 
 export const signUp = async (req: Request, res: Response) => {
   const uid = req.body
-  // console.log(req.body)
+
   try {
-    const findUser = await Users.findAll({
+    const user = await Users.findAll({
       where: uid,
       raw: true,
     })
-    console.log(findUser)
-    if (findUser.length > 0) {
+    console.log(user)
+    if (user.length > 0) {
       console.log('KOjng Create USer')
       return res.json({
         message: 'This account already sign up.',
@@ -23,6 +23,26 @@ export const signUp = async (req: Request, res: Response) => {
         message: 'sign up success',
       })
     }
+  } catch (e) {
+    console.log(e)
+    return res.json({
+      message: 'Error: ' + e,
+    })
+  }
+}
+
+export const findUser = async (req: Request, res: Response) => {
+  const uid = req.params.id
+  console.log(uid)
+
+  try {
+    const user = await Users.findOne({
+      where: { uid },
+      raw: true,
+    })
+    console.log(user)
+
+    return res.json({ user })
   } catch (e) {
     console.log(e)
     return res.json({

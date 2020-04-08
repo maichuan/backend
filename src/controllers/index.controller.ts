@@ -2,13 +2,13 @@ import { Request, Response } from 'express'
 import Restaurants from '../models/Restaurants'
 import * as geolib from 'geolib'
 import { Restaurant } from '../interface/restaurant'
+import Users from '../models/Users'
 
 export const indexWelcome = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
   const { lat, long } = req.query
-  console.log(lat, long)
 
   const getRestaurants = await Restaurants.findAll({ raw: true })
 

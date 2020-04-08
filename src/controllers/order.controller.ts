@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
 
 import ConfirmOrders from '../models/ConfirmOrders'
+import { Order, OrderMenu } from '../interface/order'
+import Orders from '../models/Orders'
+import Transactions from '../models/Transactions'
 
 // status = {
 //   -1: order but not confirm,
@@ -19,10 +22,33 @@ export const getConfirmOrder = async (req: Request, res: Response) => {
 }
 
 export const postConfirmOrder = async (req: Request, res: Response) => {
-  const newOrder = req.body
+  const order: Order = req.body
 
   try {
-    await ConfirmOrders.create(newOrder)
+    const transaction = await Transactions.create({
+      totalPrice: order.totalPrice,
+    })
+
+    const createdOrder = await Orders.create({
+      restaurantId: order.restaurantId,
+      userId: order.userId,
+      transactionId: transaction.id,
+      amount: order.menus.length,
+      price: order.totalPrice,
+    })
+
+    order.menus.map(
+      async menu =>
+        await ConfirmOrders.create({
+          userId: order.userId,
+          status: 0,
+          orderId: createdOrder.id,
+          menuId: menu.id,
+          quantity: menu.quantity,
+          details: JSON.stringify(menu.answers),
+        }),
+    )
+
     return res.json({
       message: 'Selected order success',
     })
