@@ -14,8 +14,8 @@ import Restaurants from './Restaurants'
 @Table
 export default class RestaurantStatistics extends Model<RestaurantStatistics> {
   @PrimaryKey
-  @Column
   @AutoIncrement
+  @Column
   id!: number
 
   @ForeignKey(() => Users)
