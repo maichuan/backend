@@ -5,7 +5,7 @@ const router = Router()
 
 router
   .route('/')
-  .get(getWord)
+  .get(getSearch)
   .post(getSearch)
 
 export default router

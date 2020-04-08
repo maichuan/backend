@@ -18,9 +18,8 @@ const router = Router()
 //   imgURL: 'www.image.com'
 // }
 
-router
-  .route('/:id')
-  .get(getMenu)
-  .post(postMenu)
+router.route('/').post(postMenu)
+
+router.route('/:id').get(getMenu)
 
 export default router

@@ -7,6 +7,7 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     const findUser = await Users.findAll({
       where: uid,
+      raw: true,
     })
     console.log(findUser)
     if (findUser.length > 0) {

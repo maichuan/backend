@@ -35,7 +35,7 @@ export default class Menus extends Model<Menus> {
   status!: number
 
   @Column(DataType.TEXT)
-  question?: string
+  question!: string
 
   @Column
   imgURL?: string

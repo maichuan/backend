@@ -4,6 +4,7 @@ import Restaurants from '../models/Restaurants'
 import { Restaurant } from '../interface/restaurant'
 import Menus from '../models/Menus'
 import OrderStatistics from '../models/OrderStatistics'
+import { Menu } from '../interface/menu'
 
 export const getRestaurants = async (
   req: Request,
@@ -44,12 +45,17 @@ export const getRestaurant = async (
     where: {
       restaurantId: id,
     },
+    raw: true,
   })
-  const test = { restaurant }
-  console.log(JSON.stringify(restaurant))
+
+  const formatMenu = menus.map(m => ({
+    ...m,
+    question: JSON.parse(m.question),
+  }))
+
   return res.json({
     ...JSON.parse(JSON.stringify(restaurant)),
-    menus,
+    menus: formatMenu,
   })
 }
 

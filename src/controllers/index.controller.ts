@@ -31,5 +31,5 @@ export const indexWelcome = async (
     // console.log("distance");
     // console.log(distance);
   }
-  return res.json({ restaurants: getRestaurants })
+  return res.json({ restaurants: getRestaurants, trends: [] })
 }

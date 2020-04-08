@@ -2,6 +2,12 @@ import { Request, Response } from 'express'
 
 import ConfirmOrders from '../models/ConfirmOrders'
 
+// status = {
+//   -1: order but not confirm,
+//   0: in queue,
+//   1: processing
+// }
+
 export const getConfirmOrder = async (req: Request, res: Response) => {
   const uid = req.body
   const confOrders = await ConfirmOrders.findAll({

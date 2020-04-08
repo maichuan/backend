@@ -13,7 +13,7 @@ export const getSearch = async (req: Request, res: Response) => {
     },
   })
   console.log(req.query)
-  return res.json(data)
+  return res.json({ restaurants: data })
 }
 
 export const getWord = async (req: Request, res: Response) => {

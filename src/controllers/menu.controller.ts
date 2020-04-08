@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import Menus from '../models/Menus'
+import { Menu } from '../interface/menu'
 
 export const getMenu = async (
   req: Request,
@@ -18,6 +19,11 @@ export const postMenu = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
+  const menu: Menu = req.body
+  console.log(req.body)
+  console.log(menu)
+
+  await Menus.create(menu)
   return res.json({
     message: 'create new menu',
   })

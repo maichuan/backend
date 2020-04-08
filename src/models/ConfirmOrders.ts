@@ -30,6 +30,9 @@ export default class ConfirmOrders extends Model<ConfirmOrders> {
   @Column
   status!: number
 
+  @Column
+  details!: string
+
   @CreatedAt
   @Column
   createdAt!: Date
