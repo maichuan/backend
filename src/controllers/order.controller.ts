@@ -37,7 +37,12 @@ export const getConfirmOrder = async (req: Request, res: Response) => {
           const { menuId } = c
           const menu = await Menus.findByPk(menuId, { raw: true })
 
-          return { ...c, name: menu!.name }
+          const queue = await OrderQueues.findOne({
+            where: { confirmOrderId: c.id },
+            raw: true,
+          })
+
+          return { ...c, name: menu!.name, queue: queue ? queue.seq : null }
         }),
       )
 
