@@ -46,7 +46,7 @@ export default class App {
     this.app.use('/order', Order)
     this.app.use('/search', Search)
     this.app.use('/history', History)
-    this.app.use('/test', testCron)
+    this.app.use('/rank', testCron)
   }
 
   public async listen() {
