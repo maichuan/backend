@@ -15,4 +15,5 @@ export const sequelize = new Sequelize({
   host: process.env.MYSQL_ROOT_HOST || '0.0.0.0',
   port: 3306,
   models: [__dirname + '/models'],
+  timezone: '+07:00',
 })

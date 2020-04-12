@@ -6,6 +6,8 @@ import {
   getRestaurant,
   deleteRestaurant,
   updateRestaurant,
+  postStat,
+  getStat,
 } from '../controllers/restaurant.controller'
 
 import { getMenu, postMenu } from '../controllers/menu.controller'
@@ -26,8 +28,8 @@ router
 
 router
   .route('/statistic')
-  .get()
-  .post()
+  .get(getStat)
+  .post(postStat)
 
 router
   .route('/:id')
