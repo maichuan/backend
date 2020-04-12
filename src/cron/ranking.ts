@@ -4,13 +4,12 @@ import RestaurantRank from '../models/RestautantRank'
 import { Request, Response } from 'express'
 import Sequelize from 'sequelize'
 import { sequelize } from '../database'
-import { CreatedAt } from 'sequelize-typescript'
 
 export const updateRank = () => {
   cron.schedule('1 17 * * *', async () => {
     const today = new Date()
     console.log('start', new Date().toLocaleString())
-    const orders = await RestaurantRank.findAll({
+    const orders = await Orders.findAll({
       attributes: [
         'resId',
         [Sequelize.fn('count', Sequelize.col('resId')), 'col_resId'],
@@ -21,11 +20,11 @@ export const updateRank = () => {
       group: ['resId'],
       raw: true,
     })
-    const rankOrders = await RestaurantRank.findAll()
+
     orders.map(async (order, i) => {
       const find = await RestaurantRank.findAndCountAll({
         where: {
-          resId: order.resId,
+          resId: order.restaurantId,
           createdAt: today.toISOString().slice(0, 10),
         },
       })
@@ -34,14 +33,14 @@ export const updateRank = () => {
           { score: +3 },
           {
             where: {
-              resId: order.resId,
+              resId: order.restaurantId,
               updatedAt: today.toISOString().slice(0, 10),
             },
           },
         )
       } else {
         await RestaurantRank.create({
-          resId: order.resId,
+          resId: order.restaurantId,
           score: 3,
         })
       }
