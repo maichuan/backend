@@ -6,4 +6,6 @@ export interface Restaurant {
   imgURL: string
   lat: number
   long: number
+  serviceCharge?: number
+  vat?: number
 }

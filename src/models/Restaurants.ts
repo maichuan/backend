@@ -27,6 +27,12 @@ export default class Restaurants extends Model<Restaurants> {
   @Column
   phoneno!: string
 
+  @Column
+  vat!: number
+
+  @Column
+  serviceCharge!: number
+
   @ForeignKey(() => Users)
   @Column
   ownerId!: number

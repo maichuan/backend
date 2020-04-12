@@ -19,6 +19,12 @@ export default class Transactions extends Model<Transactions> {
   @Column
   totalPrice!: number
 
+  @Column
+  vat!: number
+
+  @Column
+  serviceCharge!: number
+
   @CreatedAt
   @Column
   createdAt!: Date
