@@ -11,6 +11,7 @@ import User from './routes/user.routes'
 import Order from './routes/order.routes'
 import Search from './routes/search.route'
 import History from './routes/history.route'
+import testCron from './routes/testCron.route'
 
 import { sequelize } from './database'
 
@@ -45,6 +46,7 @@ export default class App {
     this.app.use('/order', Order)
     this.app.use('/search', Search)
     this.app.use('/history', History)
+    this.app.use('/test', testCron)
   }
 
   public async listen() {

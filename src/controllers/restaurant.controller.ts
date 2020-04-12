@@ -4,6 +4,8 @@ import Restaurants from '../models/Restaurants'
 import { Restaurant } from '../interface/restaurant'
 import Menus from '../models/Menus'
 import OrderStatistics from '../models/OrderStatistics'
+import RestaurantStat from '../models/RestaurantStatistics'
+import RestaurantRank from '../models/RestautantRank'
 import { Menu } from '../interface/menu'
 
 export const getRestaurants = async (
@@ -80,15 +82,21 @@ export const updateRestaurant = async (
   return res.json({ message: 'restaurant updated' })
 }
 
-export const updateStat = async (req: Request, res: Response) => {
-  const id = req.query
-  // Brb
-  const restaurant = await OrderStatistics.findAll({
-    where: { restaurantId: id },
-  })
-  await OrderStatistics.update(restaurant, {
-    where: {},
-  })
-  //  Brb
-  return res.json({ message: 'statRes updated' })
+export const getStat = async (req: Request, res: Response) => {
+  try {
+    const resRank = await RestaurantRank.findAll()
+    return res.json({ data: resRank })
+  } catch (error) {
+    return res.json({ message: error })
+  }
+}
+
+export const postStat = async (req: Request, res: Response) => {
+  const newStat: RestaurantStat = req.body
+  try {
+    await RestaurantStat.create(newStat)
+    res.json({ message: 'success to post' })
+  } catch (error) {
+    res.json({ message: error })
+  }
 }

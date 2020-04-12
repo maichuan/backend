@@ -19,9 +19,6 @@ export default class Restaurants extends Model<Restaurants> {
   id!: number
 
   @Column
-  resId!: string
-
-  @Column
   name!: string
 
   @Column(DataType.TEXT)
