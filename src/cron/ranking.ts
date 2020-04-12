@@ -74,15 +74,15 @@ export const getRank = async (req: Request, res: Response) => {
     },
   })
 
-  // const rank = await RestaurantRank.findAll({
-  //     attributes: [
-  //         'resId',
-  //         [Sequelize.fn('count', Sequelize.col('resId')), 'col_resId']
-  //     ],
-  //     group: ['resId'],
-  //     raw: true
-  // })
-  console.log('Rank count:', topRank)
+  const rank = await RestaurantRank.findAll({
+    attributes: [
+      'resId',
+      [Sequelize.fn('count', Sequelize.col('resId')), 'col_resId'],
+    ],
+    group: ['resId'],
+    raw: true,
+  })
+  console.log('Rank count:', rank)
 
   ////////////////////////////////////////////////////////////
   // const Op = Sequelize.Op;
@@ -100,7 +100,7 @@ export const getRank = async (req: Request, res: Response) => {
   // });
   // console.log("SUM: ", SUM);
   ////////////////////////////////////////////////////////////
-  return res.json({ data: rank })
+  return res.json({ data: topRank })
 }
 
 export const testUpdateRank = async (req: Request, res: Response) => {
