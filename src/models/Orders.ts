@@ -37,6 +37,12 @@ export default class Orders extends Model<Orders> {
   @Column
   price!: number
 
+  @Column
+  type!: number
+
+  @Column
+  table!: number
+
   @CreatedAt
   @Column
   createdAt!: Date

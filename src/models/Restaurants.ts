@@ -33,17 +33,12 @@ export default class Restaurants extends Model<Restaurants> {
   @Column
   serviceCharge!: number
 
+  @Column
+  numberOfTable!: number
+
   @ForeignKey(() => Users)
   @Column
   ownerId!: number
-
-  @CreatedAt
-  @Column
-  createdAt!: Date
-
-  @UpdatedAt
-  @Column
-  updatedAt!: Date
 
   @Column
   imgURL!: string
@@ -53,4 +48,12 @@ export default class Restaurants extends Model<Restaurants> {
 
   @Column(DataType.DECIMAL(9, 6))
   long!: number
+
+  @CreatedAt
+  @Column
+  createdAt!: Date
+
+  @UpdatedAt
+  @Column
+  updatedAt!: Date
 }

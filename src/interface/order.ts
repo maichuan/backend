@@ -3,6 +3,8 @@ export interface Order {
   restaurantId: number
   totalPrice: number
   menus: OrderMenu[]
+  table?: number
+  type: number
 }
 
 export interface OrderMenu {

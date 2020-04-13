@@ -8,4 +8,5 @@ export interface Restaurant {
   long: number
   serviceCharge?: number
   vat?: number
+  numberOfTable?: number
 }

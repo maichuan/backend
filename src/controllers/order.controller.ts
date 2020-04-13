@@ -64,12 +64,15 @@ export const postConfirmOrder = async (req: Request, res: Response) => {
       totalPrice: order.totalPrice,
     })
 
+    // type 0 = eat in, type 1 = take-away
     const createdOrder = await Orders.create({
       restaurantId: order.restaurantId,
       userId: order.userId,
       transactionId: transaction.id,
       amount: order.menus.length,
       price: order.totalPrice,
+      table: order.table,
+      type: order.type,
     })
 
     order.menus.map(async menu => {

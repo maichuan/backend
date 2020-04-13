@@ -18,9 +18,11 @@ export const signUp = async (req: Request, res: Response) => {
     } else {
       console.log('Create USer')
 
-      await Users.create(uid)
+      const newUser = await Users.create(uid)
+      console.log(newUser)
+
       return res.json({
-        message: 'sign up success',
+        user: newUser,
       })
     }
   } catch (e) {
