@@ -26,10 +26,9 @@ router
   .get()
   .post()
 
-router
-  .route('/statistic')
-  .get(getStat)
-  .post(postStat)
+router.route('/statistic').get(getStat)
+
+router.route('/click').post(postStat)
 
 router
   .route('/:id')

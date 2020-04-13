@@ -3,63 +3,130 @@ import Orders from '../models/Orders'
 import RestaurantRank from '../models/RestautantRank'
 import { Request, Response } from 'express'
 import Sequelize, { Op } from 'sequelize'
-import { sequelize } from '../database'
 import moment from 'moment'
+import RestaurantStatistics from '../models/RestaurantStatistics'
 
 export const updateRank = () => {
   cron.schedule('1 17 * * *', async () => {
-    const today = new Date()
-    console.log('start', new Date().toLocaleString())
     const orders = await Orders.findAll({
-      attributes: [
-        'resId',
-        [Sequelize.fn('count', Sequelize.col('resId')), 'col_resId'],
-      ],
       where: {
-        updatedAt: today.toISOString().slice(0, 10),
+        updatedAt: {
+          [Op.and]: {
+            [Op.gte]: moment()
+              .subtract(1, 'days')
+              .startOf('day')
+              .subtract(7, 'hours')
+              .toDate(),
+            [Op.lte]: moment().toDate(),
+          },
+        },
       },
-      group: ['resId'],
       raw: true,
     })
-
-    orders.map(async (order, i) => {
-      const find = await RestaurantRank.findAndCountAll({
+    const numclick = await RestaurantStatistics.findAll({
+      where: {
+        createdAt: {
+          [Op.and]: {
+            [Op.gte]: moment()
+              .subtract(1, 'days')
+              .startOf('day')
+              .subtract(7, 'hours')
+              .toDate(),
+            [Op.lte]: moment().toDate(),
+          },
+        },
+      },
+      raw: true,
+    })
+    /////////////////////////////// Order loop score ///////////////////////////////////////////
+    orders.map(async order => {
+      const findOrder = await RestaurantRank.findAll({
         where: {
           resId: order.restaurantId,
-          createdAt: today.toISOString().slice(0, 10),
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: moment()
+                .subtract(1, 'days')
+                .startOf('day')
+                .subtract(7, 'hours')
+                .toDate(),
+              [Op.lte]: moment().toDate(),
+            },
+          },
         },
       })
-      if (find.count !== 0) {
+      if (findOrder.length === 0) {
+        await RestaurantRank.create({
+          where: {
+            resId: order.restaurantId,
+            score: 3,
+          },
+        })
+      } else {
         await RestaurantRank.increment(
           { score: +3 },
           {
             where: {
               resId: order.restaurantId,
-              updatedAt: today.toISOString().slice(0, 10),
+              createdAt: {
+                [Op.and]: {
+                  [Op.gte]: moment()
+                    .subtract(1, 'days')
+                    .startOf('day')
+                    .subtract(7, 'hours')
+                    .toDate(),
+                  [Op.lte]: moment().toDate(),
+                },
+              },
             },
           },
         )
-      } else {
-        await RestaurantRank.create({
-          resId: order.restaurantId,
-          score: 3,
-        })
       }
-      // if (rankOrders.includes(order)) {
-      //     await RestaurantRank.increment(
-      //         { score: +3 },
-      //         {
-      //             where: {
-      //                 resId: order.resId,
-      //             },
-      //         },
-      //     )
-      // } else {
-      //     await RestaurantRank.create({
-      //         resId: order.resId,
-      //         score: 3,
-      //     })
-      // }
+    })
+    ///////////////////////////////////// Click score //////////////////////////////////
+    numclick.map(async click => {
+      const findOrder = await RestaurantRank.findAll({
+        where: {
+          resId: click.resId,
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: moment()
+                .subtract(1, 'days')
+                .startOf('day')
+                .subtract(7, 'hours')
+                .toDate(),
+              [Op.lte]: moment().toDate(),
+            },
+          },
+        },
+      })
+      if (findOrder.length === 0) {
+        await RestaurantRank.create({
+          where: {
+            resId: click.resId,
+            score: 1,
+          },
+        })
+      } else {
+        await RestaurantRank.increment(
+          { score: +1 },
+          {
+            where: {
+              resId: click.resId,
+              createdAt: {
+                [Op.and]: {
+                  [Op.gte]: moment()
+                    .subtract(1, 'days')
+                    .startOf('day')
+                    .subtract(7, 'hours')
+                    .toDate(),
+                  [Op.lte]: moment().toDate(),
+                },
+              },
+            },
+          },
+        )
+      }
     })
   })
 }
@@ -84,54 +151,53 @@ export const getRank = async (req: Request, res: Response) => {
   // })
   // console.log('Rank count:', rank)
 
-  ////////////////////////////////////////////////////////////
-  // const Op = Sequelize.Op;
-  // const TODAY_START = new Date().setHours(0, 0, 0, 0);
-  // const NOW = new Date();
-  // console.log("date:", NOW)
-
-  // const SUM = await RestaurantRank.findAll({
-  //     where: {
-  //         created: {
-  //             [Op.gt]: TODAY_START,
-  //             [Op.lt]: NOW
-  //         },
-  //     },
-  // });
-  // console.log("SUM: ", SUM);
-  ////////////////////////////////////////////////////////////
-
   const startDate: Date = new Date()
   const endDate: Date = new Date(startDate.setDate(startDate.getDate() - 1))
 
-  console.log('start:', startDate)
+  console.log(
+    'start:',
+    startDate.setHours(startDate.getDate() + 7).toPrecision(),
+  )
   console.log('end:', endDate)
 
   console.log('moment', moment())
-  const orders = await Orders.findAll({
-    attributes: [
-      'restaurantId',
-      [Sequelize.fn('count', Sequelize.col('restaurantId')), 'col_resId'],
-    ],
+  console.log(
+    'mo',
+    moment()
+      .subtract(1, 'days')
+      .startOf('day')
+      .toDate(),
+  )
+  const yesterday = moment()
+    .subtract(7, 'hours')
+    .startOf('day')
+    .toDate()
+  console.log('yes', yesterday)
+
+  const ranks = await RestaurantRank.findAll({
+    // attributes: [
+    //     'restaurantId',
+    //     [Sequelize.fn('count', Sequelize.col('restaurantId')), 'col_resId'],
+    // ],
+    limit: 10,
+    order: [['score', 'DESC']],
     where: {
       createdAt: {
         [Op.and]: {
           [Op.gte]: moment()
             .subtract(1, 'days')
             .startOf('day')
+            .subtract(7, 'hours')
             .toDate(),
           [Op.lte]: moment().toDate(),
         },
       },
-      // createdAt: {
-      //     [Op.gte]: moment().subtract(1, 'days').toDate(),
-      // }
     },
-    group: ['restaurantId'],
+    // group: ['restaurantId'],
     raw: true,
   })
 
-  console.log(today)
+  console.log(ranks.length)
   // orders.map(async (order) => {
   //     const find = await RestaurantRank.findAndCountAll({
   //         where: {
@@ -156,7 +222,7 @@ export const getRank = async (req: Request, res: Response) => {
   //         })
   //     }
   // })
-  return res.json({ data: orders })
+  return res.json({ data: ranks })
 }
 
 export const testUpdateRank = async (req: Request, res: Response) => {

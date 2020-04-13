@@ -26,14 +26,16 @@ export default class RestaurantRank extends Model<RestaurantRank> {
   score!: number
 
   @CreatedAt
-  @Column({
-    type: DataType.DATEONLY,
-  })
-  cretedAt!: Date
+  @Column
+  //   @Column({
+  //     type: DataType.DATEONLY,
+  //   })
+  createdAt!: Date
 
   @UpdatedAt
-  @Column({
-    type: DataType.DATEONLY,
-  })
+  @Column
+  //   @Column({
+  //     type: DataType.DATEONLY,
+  //   })
   updatedAt!: Date
 }

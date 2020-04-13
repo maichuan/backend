@@ -15,8 +15,8 @@ export const sequelize = new Sequelize({
   host: process.env.MYSQL_ROOT_HOST || '0.0.0.0',
   port: 3306,
   models: [__dirname + '/models'],
-  dialectOptions: {
-    useUTC: false, // for reading from database
-  },
-  timezone: '+07:00',
+  // dialectOptions: {
+  //   useUTC: false, // for reading from database
+  // },
+  timezone: 'Asia/Bangkok',
 })
