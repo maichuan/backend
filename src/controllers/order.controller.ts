@@ -109,6 +109,39 @@ export const postConfirmOrder = async (req: Request, res: Response) => {
   }
 }
 
+export const getOrderByRestaurantId = async (req: Request, res: Response) => {
+  const { resId } = req.params
+
+  const orders = await Orders.findAll({
+    where: { restaurantId: resId },
+    raw: true,
+  })
+
+  if (orders) {
+    const orderItemsId = orders.map(order => order.id)
+    const orderItems =
+      (await ConfirmOrders.findAll({
+        where: { orderId: orderItemsId },
+        raw: true,
+      })) || []
+
+    const ordersWithName = await Promise.all(
+      orderItems.map(async c => {
+        const { menuId } = c
+        const menu = await Menus.findByPk(menuId, { raw: true })
+
+        return { ...c, name: menu!.name }
+      }),
+    )
+
+    const formatOrder = ordersWithName.map(item => {
+      return { ...item, details: JSON.parse(item.details) }
+    })
+    return res.json({ data: formatOrder })
+  }
+  return res.json({ data: [] })
+}
+
 export const orderComplete = async (req: Request, res: Response) => {
   const { restaurantId, confirmOrderId } = req.body
 

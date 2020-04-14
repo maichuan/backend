@@ -1,5 +1,6 @@
 import { Request, Response, request, response } from 'express'
 import Users from '../models/Users'
+import Restaurants from '../models/Restaurants'
 
 export const signUp = async (req: Request, res: Response) => {
   const uid = req.body
@@ -35,12 +36,21 @@ export const signUp = async (req: Request, res: Response) => {
 
 export const findUser = async (req: Request, res: Response) => {
   const uid = req.params.id
+  const isOwner = req.query.owner
 
   try {
-    const user = await Users.findOne({
+    const user = (await Users.findOne({
       where: { uid },
       raw: true,
-    })
+    })) || { id: 0 }
+
+    if (isOwner) {
+      const restaurant = await Restaurants.findOne({
+        where: { ownerId: user.id },
+        raw: true,
+      })
+      return res.json({ user, restaurant })
+    }
 
     return res.json({ user })
   } catch (e) {

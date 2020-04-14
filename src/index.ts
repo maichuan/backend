@@ -4,7 +4,7 @@ import { updateRank } from './cron/ranking'
 
 const main = async () => {
   const app = new App(3000)
-  updateRestaurantTrend()
+  // updateRestaurantTrend()
   updateRank()
   await app.listen()
 }
