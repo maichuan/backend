@@ -4,6 +4,7 @@ import {
   postConfirmOrder,
   orderComplete,
   getOrderByRestaurantId,
+  clearOrderByRestaurantId,
 } from '../controllers/order.controller'
 
 const router = Router()
@@ -13,7 +14,10 @@ router
   .get(getConfirmOrder)
   .post(postConfirmOrder)
 
-router.route('/:resId').get(getOrderByRestaurantId)
+router
+  .route('/:resId')
+  .get(getOrderByRestaurantId)
+  .post(clearOrderByRestaurantId)
 
 router.route('/complete').post(orderComplete)
 

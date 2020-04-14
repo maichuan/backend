@@ -12,6 +12,7 @@ import {
 import Users from './Users'
 import Menus from './Menus'
 import Orders from './Orders'
+import Restaurants from './Restaurants'
 
 @Table
 export default class ConfirmOrders extends Model<ConfirmOrders> {
@@ -31,6 +32,10 @@ export default class ConfirmOrders extends Model<ConfirmOrders> {
   @ForeignKey(() => Orders)
   @Column
   orderId!: number
+
+  @ForeignKey(() => Restaurants)
+  @Column
+  restaurantId!: number
 
   @Column
   status!: number
