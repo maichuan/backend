@@ -15,9 +15,10 @@ import { raw } from 'body-parser'
 //   1: processing,
 //   2: completed,
 //   3: cancel by restaurant
+//   4: cancel by user
 // }
 
-const { gte } = Sequelize.Op
+const { lt } = Sequelize.Op
 
 export const getConfirmOrder = async (req: Request, res: Response) => {
   const id = req.headers.id
@@ -28,7 +29,7 @@ export const getConfirmOrder = async (req: Request, res: Response) => {
         where: {
           userId: id,
           status: {
-            [gte]: 2,
+            [lt]: 2,
           },
         },
         raw: true,
@@ -112,6 +113,43 @@ export const postConfirmOrder = async (req: Request, res: Response) => {
   }
 }
 
+export const cancelOrderByUser = async (req: Request, res: Response) => {
+  const { orderId, orderItemId, menuId } = req.body
+  // const userId = req.headers.id
+
+  try {
+    await ConfirmOrders.update(
+      { status: 4 },
+      { where: { id: orderItemId, status: 0 } },
+    )
+
+    const { price } = (await Menus.findOne({
+      where: { id: menuId },
+      attributes: ['price'],
+      raw: true,
+    })) || { price: 0 }
+
+    const order = await Orders.findOne({
+      where: { id: orderId },
+      raw: true,
+    })
+
+    if (order) {
+      const { id, transactionId } = order
+      await Orders.increment({ price: -price }, { where: { id } })
+      await Transactions.increment(
+        { totalPrice: -price },
+        { where: { id: transactionId } },
+      )
+    }
+    return res.status(200).json('complete')
+  } catch (e) {
+    console.log(e)
+
+    return res.status(401).json('failed')
+  }
+}
+
 export const getOrderByRestaurantId = async (req: Request, res: Response) => {
   const { resId } = req.params
 
@@ -143,6 +181,45 @@ export const getOrderByRestaurantId = async (req: Request, res: Response) => {
     return res.json({ data: formatOrder })
   }
   return res.json({ data: [] })
+}
+
+export const clearOrderByRestaurantId = async (req: Request, res: Response) => {
+  const { resId } = req.params
+
+  const orders = await ConfirmOrders.findAll({
+    where: {
+      restaurantId: resId,
+      status: 0,
+    },
+    raw: true,
+  })
+
+  await ConfirmOrders.update(
+    { status: 3 },
+    { where: { id: orders.map(o => o.id) } },
+  )
+  orders.map(async order => {
+    const { price } = (await Menus.findOne({
+      where: { id: order.menuId },
+      attributes: ['price'],
+      raw: true,
+    })) || { price: 0 }
+    const orderId = await Orders.findOne({
+      where: { id: order.orderId },
+      raw: true,
+    })
+    if (orderId) {
+      const { id, transactionId } = orderId
+      await Orders.increment({ price: -price }, { where: { id } })
+      await Transactions.increment(
+        { totalPrice: -price },
+        { where: { id: transactionId } },
+      )
+    }
+  })
+  // console.log(orders)
+
+  return res.json('complete')
 }
 
 export const orderComplete = async (req: Request, res: Response) => {
@@ -184,45 +261,6 @@ export const orderComplete = async (req: Request, res: Response) => {
         },
       ),
   )
-
-  return res.json('complete')
-}
-
-export const clearOrderByRestaurantId = async (req: Request, res: Response) => {
-  const { resId } = req.params
-
-  const orders = await ConfirmOrders.findAll({
-    where: {
-      restaurantId: resId,
-      status: 0,
-    },
-    raw: true,
-  })
-
-  await ConfirmOrders.update(
-    { status: 3 },
-    { where: { id: orders.map(o => o.id) } },
-  )
-  orders.map(async order => {
-    const { price } = (await Menus.findOne({
-      where: { id: order.menuId },
-      attributes: ['price'],
-      raw: true,
-    })) || { price: 0 }
-    const orderId = await Orders.findOne({
-      where: { id: order.orderId },
-      raw: true,
-    })
-    if (orderId) {
-      const { id, transactionId } = orderId
-      await Orders.increment({ price: -price }, { where: { id } })
-      await Transactions.increment(
-        { totalPrice: -price },
-        { where: { id: transactionId } },
-      )
-    }
-  })
-  // console.log(orders)
 
   return res.json('complete')
 }

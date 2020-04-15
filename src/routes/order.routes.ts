@@ -5,6 +5,7 @@ import {
   orderComplete,
   getOrderByRestaurantId,
   clearOrderByRestaurantId,
+  cancelOrderByUser,
 } from '../controllers/order.controller'
 
 const router = Router()
@@ -13,6 +14,7 @@ router
   .route('/')
   .get(getConfirmOrder)
   .post(postConfirmOrder)
+  .put(cancelOrderByUser)
 
 router
   .route('/:resId')

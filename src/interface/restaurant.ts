@@ -10,3 +10,8 @@ export interface Restaurant {
   vat?: number
   numberOfTable?: number
 }
+
+export interface RestaurantStat {
+  userId: number
+  resId: number
+}

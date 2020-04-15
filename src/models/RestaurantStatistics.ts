@@ -20,7 +20,7 @@ export default class RestaurantStatistics extends Model<RestaurantStatistics> {
 
   @ForeignKey(() => Users)
   @Column
-  uid!: string
+  userId!: string
 
   @ForeignKey(() => Restaurants)
   @Column

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 import Restaurants from '../models/Restaurants'
 
-import { Restaurant } from '../interface/restaurant'
+import { Restaurant, RestaurantStat } from '../interface/restaurant'
 import Menus from '../models/Menus'
 import OrderStatistics from '../models/OrderStatistics'
-import RestaurantStat from '../models/RestaurantStatistics'
 import RestaurantRank from '../models/RestautantRank'
 import { Menu } from '../interface/menu'
+import RestaurantStatistics from '../models/RestaurantStatistics'
 
 export const getRestaurants = async (
   req: Request,
@@ -94,7 +94,7 @@ export const getStat = async (req: Request, res: Response) => {
 export const postStat = async (req: Request, res: Response) => {
   const newStat: RestaurantStat = req.body
   try {
-    await RestaurantStat.create(newStat)
+    await RestaurantStatistics.create(newStat)
     res.json({ message: 'success to post' })
   } catch (error) {
     res.json({ message: error })
