@@ -6,21 +6,14 @@ export const signUp = async (req: Request, res: Response) => {
   const uid = req.body
 
   try {
-    const user = await Users.findAll({
+    const user = await Users.findOne({
       where: uid,
       raw: true,
     })
-    console.log(user)
-    if (user.length > 0) {
-      console.log('KOjng Create USer')
-      return res.json({
-        message: 'This account already sign up.',
-      })
+    if (user) {
+      return res.json({ user })
     } else {
-      console.log('Create USer')
-
       const newUser = await Users.create(uid)
-      console.log(newUser)
 
       return res.json({
         user: newUser,
@@ -53,6 +46,38 @@ export const findUser = async (req: Request, res: Response) => {
     }
 
     return res.json({ user })
+  } catch (e) {
+    console.log(e)
+    return res.json({
+      message: 'Error: ' + e,
+    })
+  }
+}
+
+export const createRestaurantOwner = async (req: Request, res: Response) => {
+  const { uid, username, restaurantName, phoneno } = req.body
+
+  try {
+    const user = await Users.findOne({
+      where: { uid, username },
+      raw: true,
+    })
+    if (user) {
+      return res.status(401).json({ message: 'User already exist' })
+    } else {
+      const newUser = await Users.create({ uid, username })
+
+      const restaurant = await Restaurants.create({
+        ownerId: newUser.id,
+        name: restaurantName,
+        phoneno,
+      })
+
+      return res.json({
+        user: newUser,
+        restaurant,
+      })
+    }
   } catch (e) {
     console.log(e)
     return res.json({
