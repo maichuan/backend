@@ -268,15 +268,21 @@ export const getTrendRestaurant = async () => {
     raw: true,
   })
 
-  const ids = ranks.map(r => r.id)
+  const ids = ranks.map(r => r.resId)
 
-  const trends = await Restaurants.findAll({ where: { id: ids }, raw: true })
-  console.log(ids, trends)
+  const restaurants = await Restaurants.findAll({
+    where: { id: ids },
+    raw: true,
+  })
 
-  // const trends = await Promise.all(ranks.map(async rank => {
-  //   return await Restaurants.findAll()
-  // }))
-  return ranks
+  const trends = restaurants.map(restaurant => {
+    const { score } = ranks.find(rank => rank.resId === restaurant.id) || {
+      score: 0,
+    }
+    return { ...restaurant, score }
+  })
+
+  return trends.sort((a, b) => b.score - a.score)
 }
 
 export const testUpdateRank = async (req: Request, res: Response) => {
