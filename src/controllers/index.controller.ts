@@ -5,6 +5,7 @@ import { Restaurant } from '../interface/restaurant'
 import Users from '../models/Users'
 
 import Sequelize from 'sequelize'
+import { getTrendRestaurant } from '../cron/ranking'
 
 const { ne } = Sequelize.Op
 
@@ -45,5 +46,8 @@ export const indexWelcome = async (
     // console.log("distance");
     // console.log(distance);
   }
-  return res.json({ restaurants: getRestaurants, trends: [] })
+
+  const trends = await getTrendRestaurant()
+
+  return res.json({ restaurants: getRestaurants, trends })
 }

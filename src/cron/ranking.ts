@@ -5,9 +5,13 @@ import { Request, Response } from 'express'
 import Sequelize, { Op } from 'sequelize'
 import moment from 'moment'
 import RestaurantStatistics from '../models/RestaurantStatistics'
+import Restaurants from '../models/Restaurants'
+import { Rank } from '../interface/restaurant'
 
 export const updateRank = () => {
-  cron.schedule('1 17 * * *', async () => {
+  // cron.schedule('1 17 * * *', async () => {
+  cron.schedule('20 16 * * *', async () => {
+    const ranks: Rank[] = []
     const orders = await Orders.findAll({
       where: {
         updatedAt: {
@@ -40,94 +44,114 @@ export const updateRank = () => {
     })
     /////////////////////////////// Order loop score ///////////////////////////////////////////
     orders.map(async order => {
-      const findOrder = await RestaurantRank.findAll({
-        where: {
-          resId: order.restaurantId,
-          createdAt: {
-            [Op.and]: {
-              [Op.gte]: moment()
-                .subtract(1, 'days')
-                .startOf('day')
-                .subtract(7, 'hours')
-                .toDate(),
-              [Op.lte]: moment().toDate(),
-            },
-          },
-        },
-      })
-      if (findOrder.length === 0) {
-        await RestaurantRank.create({
-          where: {
-            resId: order.restaurantId,
-            score: 3,
-          },
-        })
+      const rankIndex = ranks.findIndex(
+        rank => rank.resId === order.restaurantId,
+      )
+      if (rankIndex >= 0) {
+        ranks[rankIndex] = {
+          ...ranks[rankIndex],
+          score: ranks[rankIndex].score + 3,
+        }
       } else {
-        await RestaurantRank.increment(
-          { score: +3 },
-          {
-            where: {
-              resId: order.restaurantId,
-              createdAt: {
-                [Op.and]: {
-                  [Op.gte]: moment()
-                    .subtract(1, 'days')
-                    .startOf('day')
-                    .subtract(7, 'hours')
-                    .toDate(),
-                  [Op.lte]: moment().toDate(),
-                },
-              },
-            },
-          },
-        )
+        ranks.push({ resId: order.restaurantId, score: 3 })
       }
+      // const findOrder = await RestaurantRank.findAll({
+      //   where: {
+      //     resId: order.restaurantId,
+      //     createdAt: {
+      //       [Op.and]: {
+      //         [Op.gte]: moment()
+      //           .subtract(1, 'days')
+      //           .startOf('day')
+      //           .subtract(7, 'hours')
+      //           .toDate(),
+      //         [Op.lte]: moment().toDate(),
+      //       },
+      //     },
+      //   },
+      // })
+
+      // if (findOrder.length === 0) {
+      //   await RestaurantRank.create({
+      //     resId: order.restaurantId,
+      //     score: 3,
+      //   })
+      // } else {
+      //   await RestaurantRank.increment(
+      //     { score: +3 },
+      //     {
+      //       where: {
+      //         resId: order.restaurantId,
+      //         createdAt: {
+      //           [Op.and]: {
+      //             [Op.gte]: moment()
+      //               .subtract(1, 'days')
+      //               .startOf('day')
+      //               .subtract(7, 'hours')
+      //               .toDate(),
+      //             [Op.lte]: moment().toDate(),
+      //           },
+      //         },
+      //       },
+      //     },
+      //   )
+      // }
     })
     ///////////////////////////////////// Click score //////////////////////////////////
     numclick.map(async click => {
-      const findOrder = await RestaurantRank.findAll({
-        where: {
-          resId: click.resId,
-          createdAt: {
-            [Op.and]: {
-              [Op.gte]: moment()
-                .subtract(1, 'days')
-                .startOf('day')
-                .subtract(7, 'hours')
-                .toDate(),
-              [Op.lte]: moment().toDate(),
-            },
-          },
-        },
-      })
-      if (findOrder.length === 0) {
-        await RestaurantRank.create({
-          where: {
-            resId: click.resId,
-            score: 1,
-          },
-        })
+      const rankIndex = ranks.findIndex(
+        rank => rank.resId === Number.parseInt(click.resId, 10),
+      )
+      if (rankIndex >= 0) {
+        ranks[rankIndex] = {
+          ...ranks[rankIndex],
+          score: ranks[rankIndex].score + 1,
+        }
       } else {
-        await RestaurantRank.increment(
-          { score: +1 },
-          {
-            where: {
-              resId: click.resId,
-              createdAt: {
-                [Op.and]: {
-                  [Op.gte]: moment()
-                    .subtract(1, 'days')
-                    .startOf('day')
-                    .subtract(7, 'hours')
-                    .toDate(),
-                  [Op.lte]: moment().toDate(),
-                },
-              },
-            },
-          },
-        )
+        ranks.push({ resId: Number.parseInt(click.resId, 10), score: 1 })
       }
+      // const findOrder = await RestaurantRank.findAll({
+      //   where: {
+      //     resId: click.resId,
+      //     createdAt: {
+      //       [Op.and]: {
+      //         [Op.gte]: moment()
+      //           .subtract(1, 'days')
+      //           .startOf('day')
+      //           .subtract(7, 'hours')
+      //           .toDate(),
+      //         [Op.lte]: moment().toDate(),
+      //       },
+      //     },
+      //   },
+      // })
+      // if (findOrder.length === 0) {
+      //   await RestaurantRank.create({
+      //     resId: click.resId,
+      //     score: 1,
+      //   })
+      // } else {
+      //   await RestaurantRank.increment(
+      //     { score: +1 },
+      //     {
+      //       where: {
+      //         resId: click.resId,
+      //         createdAt: {
+      //           [Op.and]: {
+      //             [Op.gte]: moment()
+      //               .subtract(1, 'days')
+      //               .startOf('day')
+      //               .subtract(7, 'hours')
+      //               .toDate(),
+      //             [Op.lte]: moment().toDate(),
+      //           },
+      //         },
+      //       },
+      //     },
+      //   )
+      // }
     })
+    await RestaurantRank.bulkCreate(ranks)
   })
 }
 
@@ -223,6 +247,36 @@ export const getRank = async (req: Request, res: Response) => {
   //     }
   // })
   return res.json({ data: ranks })
+}
+
+export const getTrendRestaurant = async () => {
+  const ranks = await RestaurantRank.findAll({
+    limit: 10,
+    order: [['score', 'DESC']],
+    where: {
+      createdAt: {
+        [Op.and]: {
+          [Op.gte]: moment()
+            .subtract(1, 'days')
+            .startOf('day')
+            .subtract(7, 'hours')
+            .toDate(),
+          [Op.lte]: moment().toDate(),
+        },
+      },
+    },
+    raw: true,
+  })
+
+  const ids = ranks.map(r => r.id)
+
+  const trends = await Restaurants.findAll({ where: { id: ids }, raw: true })
+  console.log(ids, trends)
+
+  // const trends = await Promise.all(ranks.map(async rank => {
+  //   return await Restaurants.findAll()
+  // }))
+  return ranks
 }
 
 export const testUpdateRank = async (req: Request, res: Response) => {

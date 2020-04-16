@@ -15,3 +15,8 @@ export interface RestaurantStat {
   userId: number
   resId: number
 }
+
+export interface Rank {
+  resId: number
+  score: number
+}

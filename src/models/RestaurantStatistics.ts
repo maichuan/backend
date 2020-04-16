@@ -28,5 +28,5 @@ export default class RestaurantStatistics extends Model<RestaurantStatistics> {
 
   @CreatedAt
   @Column
-  creatAt!: Date
+  createdAt!: Date
 }
