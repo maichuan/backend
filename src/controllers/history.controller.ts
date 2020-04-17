@@ -13,6 +13,7 @@ export const getHistory = async (req: Request, res: Response) => {
       where: {
         userId: id,
       },
+      order: [['createdAt', 'DESC']],
       raw: true,
     })
 
