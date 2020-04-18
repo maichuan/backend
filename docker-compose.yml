@@ -8,6 +8,8 @@ services:
       - db_data:/var/lib/mysql
     restart: always
     container_name: mysql-maichaun
+    networks:
+      - kelner
     ports: 
       - '3307:33060'
     environment:
@@ -22,6 +24,8 @@ services:
     restart: always
     ports:
       - '8080:80'
+    networks:
+      - kelner
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password 
@@ -35,11 +39,28 @@ services:
     depends_on:
       - db
     container_name: server-maichaun
+    networks:
+      - kelner
     volumes: 
       - .:/app
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password 
       MYSQL_ROOT_HOST: mysql-maichaun
+
+  schedule:
+    image: kelner-scheduling
+    restart: always
+    ports:
+      - "7777:7777"
+    command: yarn dev
+    networks:
+      - kelner
+    container_name: kelner-scheduling
+    environment: 
+      SCHEDULE_CRON: 1 17 * * *
+      HOST: http://api:3000
 volumes:
   db_data:
+networks:
+  kelner:

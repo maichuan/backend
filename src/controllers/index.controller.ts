@@ -5,7 +5,7 @@ import { Restaurant } from '../interface/restaurant'
 import Users from '../models/Users'
 
 import Sequelize from 'sequelize'
-import { getTrendRestaurant } from '../cron/ranking'
+import { getTrendRestaurant } from './rank.controller'
 
 const { ne } = Sequelize.Op
 

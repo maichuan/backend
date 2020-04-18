@@ -12,7 +12,7 @@ import Order from './routes/order.routes'
 import Search from './routes/search.route'
 import History from './routes/history.route'
 import Ordered from './routes/ordered.routes'
-import testCron from './routes/testCron.route'
+import Rank from './routes/rank.route'
 
 import { sequelize } from './database'
 
@@ -48,7 +48,7 @@ export default class App {
     this.app.use('/search', Search)
     this.app.use('/history', History)
     this.app.use('/ordered', Ordered)
-    this.app.use('/rank', testCron)
+    this.app.use('/rank', Rank)
   }
 
   public async listen() {
