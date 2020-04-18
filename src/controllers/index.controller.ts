@@ -6,6 +6,7 @@ import Users from '../models/Users'
 
 import Sequelize from 'sequelize'
 import { getTrendRestaurant } from './rank.controller'
+import { GeolibInputCoordinates } from 'geolib/es/types'
 
 const { ne } = Sequelize.Op
 
@@ -29,11 +30,14 @@ export const indexWelcome = async (
 
   if (lat !== undefined && long !== undefined) {
     console.log(lat, long)
-    const distance = (restaurant: Restaurant) =>
-      geolib.getDistance(
-        { latitude: lat, longitude: long },
-        { latitude: restaurant.lat, longitude: restaurant.long },
-      )
+    const fromCoor: GeolibInputCoordinates = { latitude: lat, longitude: long }
+    const distance = (restaurant: Restaurant) => {
+      const toCoor: GeolibInputCoordinates = {
+        latitude: restaurant.lat,
+        longitude: restaurant.long,
+      }
+      return geolib.getDistance(fromCoor, toCoor)
+    }
 
     getRestaurants.sort((a: any, b: any) => {
       return distance(a) - distance(b)
