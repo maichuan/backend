@@ -25,6 +25,9 @@ export default class Transactions extends Model<Transactions> {
   @Column
   serviceCharge!: number
 
+  @Column
+  chargeId!: string
+
   @CreatedAt
   @Column
   createdAt!: Date

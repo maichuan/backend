@@ -5,6 +5,7 @@ export interface Order {
   menus: OrderMenu[]
   table?: number
   type: number
+  chargeId: string
 }
 
 export interface OrderMenu {

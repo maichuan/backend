@@ -65,6 +65,7 @@ export const postConfirmOrder = async (req: Request, res: Response) => {
   try {
     const transaction = await Transactions.create({
       totalPrice: order.totalPrice,
+      chargeId: order.chargeId,
     })
 
     // type 0 = eat in, type 1 = take-away
