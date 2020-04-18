@@ -7,6 +7,7 @@ import Users from '../models/Users'
 import Sequelize from 'sequelize'
 import { getTrendRestaurant } from './rank.controller'
 import { GeolibInputCoordinates } from 'geolib/es/types'
+import { Cor } from '../interface/welcome'
 
 const { ne } = Sequelize.Op
 
@@ -14,8 +15,8 @@ export const indexWelcome = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
-  const { lat, long } = req.query
-
+  const lat = req.query.lat as string
+  const long = req.query.long as string
   const getRestaurants = await Restaurants.findAll({
     where: {
       lat: {
@@ -30,7 +31,10 @@ export const indexWelcome = async (
 
   if (lat !== undefined && long !== undefined) {
     console.log(lat, long)
-    const fromCoor: GeolibInputCoordinates = { latitude: lat, longitude: long }
+    const latitude = parseFloat(lat)
+    const longitude = parseFloat(long)
+    // lat = parseFloat(lat)
+    const fromCoor: GeolibInputCoordinates = { latitude, longitude }
     const distance = (restaurant: Restaurant) => {
       const toCoor: GeolibInputCoordinates = {
         latitude: restaurant.lat,
