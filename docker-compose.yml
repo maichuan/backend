@@ -58,7 +58,7 @@ services:
       - kelner
     container_name: kelner-scheduling
     environment: 
-      SCHEDULE_CRON: 44 * * * *
+      SCHEDULE_CRON: 1 17 * * *
       HOST: http://api:3000
 volumes:
   db_data:
