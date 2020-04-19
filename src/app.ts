@@ -31,7 +31,6 @@ export default class App {
   }
 
   public middlewares() {
-    this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: false }))
     this.app.use(morgan('dev'))
     this.app.use(express.json())

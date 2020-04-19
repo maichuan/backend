@@ -46,6 +46,9 @@ export default class ConfirmOrders extends Model<ConfirmOrders> {
   @Column
   quantity!: number
 
+  @Column
+  token!: string
+
   @CreatedAt
   @Column
   createdAt!: Date

@@ -6,6 +6,7 @@ import {
   getOrderByRestaurantId,
   clearOrderByRestaurantId,
   cancelOrderByUser,
+  pickToCook,
 } from '../controllers/order.controller'
 
 const router = Router()
@@ -20,7 +21,8 @@ router
   .route('/:resId')
   .get(getOrderByRestaurantId)
   .post(clearOrderByRestaurantId)
+  .put(pickToCook)
 
-router.route('/complete').post(orderComplete)
+router.route('/:resId/complete').post(orderComplete)
 
 export default router

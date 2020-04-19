@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 console.log(
   '====>',
+  process.env.NOTIFICATION_HOST,
   process.env.PMA_HOST,
   process.env.MYSQL_ROOT_PASSWORD,
   __dirname + '/models',

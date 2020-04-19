@@ -1,13 +1,12 @@
 version: '3'
 
 services:
-  # Database
   db:
     image: mysql:5.7
     volumes:
       - db_data:/var/lib/mysql
     restart: always
-    container_name: mysql-maichaun
+    container_name: kelner-mysql
     networks:
       - kelner
     ports: 
@@ -15,12 +14,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
 
-  # phpmyadmin
   phpmyadmin:
     depends_on:
       - db
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin-maichaun
+    container_name: kelner-phpmyadmin
     restart: always
     ports:
       - '8080:80'
@@ -38,7 +36,7 @@ services:
     command: yarn dev
     depends_on:
       - db
-    container_name: server-maichaun
+    container_name: kelner-server
     networks:
       - kelner
     volumes: 
@@ -46,20 +44,32 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password 
-      MYSQL_ROOT_HOST: mysql-maichaun
+      MYSQL_ROOT_HOST: kelner-mysql
+      NOTIFICATION_HOST: http://notification:2541
 
   schedule:
     image: kelner-scheduling
     restart: always
     ports:
       - "7777:7777"
-    command: yarn dev
+    command: yarn start
     networks:
       - kelner
     container_name: kelner-scheduling
     environment: 
       SCHEDULE_CRON: 1 17 * * *
       HOST: http://api:3000
+
+  notification:
+    image: kelner-notification
+    restart: always
+    ports:
+      - "2541:2541"
+    command: yarn start
+    networks:
+      - kelner
+    container_name: kelner-notification
+
 volumes:
   db_data:
 networks:

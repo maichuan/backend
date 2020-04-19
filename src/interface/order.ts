@@ -6,6 +6,7 @@ export interface Order {
   table?: number
   type: number
   chargeId: string
+  token?: string
 }
 
 export interface OrderMenu {
@@ -20,4 +21,10 @@ export interface OrderMenu {
 export interface Answer {
   question: string
   choices: string | string[]
+}
+
+export interface Notification {
+  token: string
+  title: string
+  name: string
 }

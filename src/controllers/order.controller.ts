@@ -8,6 +8,7 @@ import Menus from '../models/Menus'
 import { Order } from '../interface/order'
 import OrderQueues from '../models/OrderQueues'
 import { raw } from 'body-parser'
+import { onOrderCompletePushNotification } from '../utils/notification'
 
 // status = {
 //   -1: order but not confirm,
@@ -88,6 +89,7 @@ export const postConfirmOrder = async (req: Request, res: Response) => {
         quantity: menu.quantity,
         details: JSON.stringify(menu.answers),
         restaurantId: order.restaurantId,
+        token: order.token || '',
       })
 
       const seq = await OrderQueues.count({
@@ -163,7 +165,7 @@ export const getOrderByRestaurantId = async (req: Request, res: Response) => {
     const orderItemsId = orders.map(order => order.id)
     const orderItems =
       (await ConfirmOrders.findAll({
-        where: { orderId: orderItemsId },
+        where: { orderId: orderItemsId, status: { [lt]: 2 } },
         raw: true,
       })) || []
 
@@ -223,10 +225,38 @@ export const clearOrderByRestaurantId = async (req: Request, res: Response) => {
   return res.json('complete')
 }
 
+export const pickToCook = async (req: Request, res: Response) => {
+  const { confirmOrderId } = req.body
+  try {
+    await ConfirmOrders.update({ status: 1 }, { where: { id: confirmOrderId } })
+    return res.status(200).send({ message: 'completed' })
+  } catch (e) {
+    console.log(e)
+    return res.status(401).send({ message: 'failed' })
+  }
+}
+
 export const orderComplete = async (req: Request, res: Response) => {
-  const { restaurantId, confirmOrderId } = req.body
+  const { confirmOrderId } = req.body
+  const restaurantId = req.params.resId
 
   await ConfirmOrders.update({ status: 2 }, { where: { id: confirmOrderId } })
+
+  const { menuId, token } = (await ConfirmOrders.findByPk(confirmOrderId, {
+    attributes: ['menuId', 'token'],
+  })) || { token: null }
+
+  if (token) {
+    const { name } = (await Menus.findByPk(menuId, {
+      attributes: ['name'],
+    })) || { name: 'No name' }
+
+    onOrderCompletePushNotification({
+      token,
+      title: 'Order Completed',
+      name,
+    })
+  }
 
   const nextQueue = await OrderQueues.findOne({
     where: { restaurantId },
