@@ -8,6 +8,8 @@ import {
   updateRestaurant,
   postStat,
   getStat,
+  getIncomeById,
+  getMenuEachDay,
 } from '../controllers/restaurant.controller'
 
 import { getMenu, postMenu } from '../controllers/menu.controller'
@@ -27,6 +29,10 @@ router
   .post()
 
 router.route('/statistic').get(getStat)
+
+router.route('/summary/:id').get(getIncomeById)
+
+router.route('/summary/:id/:date').get(getMenuEachDay)
 
 router.route('/click').post(postStat)
 
