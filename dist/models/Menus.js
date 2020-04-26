@@ -13,67 +13,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const Users_1 = __importDefault(require("./Users"));
-let Restaurants = class Restaurants extends sequelize_typescript_1.Model {
+const Restaurants_1 = __importDefault(require("./Restaurants"));
+let Menus = class Menus extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.PrimaryKey,
     sequelize_typescript_1.AutoIncrement,
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], Restaurants.prototype, "id", void 0);
+], Menus.prototype, "id", void 0);
+__decorate([
+    sequelize_typescript_1.ForeignKey(() => Restaurants_1.default),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], Menus.prototype, "restaurantId", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
-], Restaurants.prototype, "name", void 0);
+], Menus.prototype, "name", void 0);
+__decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], Menus.prototype, "price", void 0);
 __decorate([
     sequelize_typescript_1.Column(sequelize_typescript_1.DataType.TEXT),
     __metadata("design:type", String)
-], Restaurants.prototype, "address", void 0);
+], Menus.prototype, "description", void 0);
+__decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", Number)
+], Menus.prototype, "status", void 0);
+__decorate([
+    sequelize_typescript_1.Column(sequelize_typescript_1.DataType.TEXT),
+    __metadata("design:type", String)
+], Menus.prototype, "question", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
-], Restaurants.prototype, "phoneno", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Restaurants.prototype, "vat", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Restaurants.prototype, "serviceCharge", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Restaurants.prototype, "numberOfTable", void 0);
-__decorate([
-    sequelize_typescript_1.ForeignKey(() => Users_1.default),
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], Restaurants.prototype, "ownerId", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", String)
-], Restaurants.prototype, "imgURL", void 0);
-__decorate([
-    sequelize_typescript_1.Column(sequelize_typescript_1.DataType.DECIMAL(9, 6)),
-    __metadata("design:type", Number)
-], Restaurants.prototype, "lat", void 0);
-__decorate([
-    sequelize_typescript_1.Column(sequelize_typescript_1.DataType.DECIMAL(9, 6)),
-    __metadata("design:type", Number)
-], Restaurants.prototype, "long", void 0);
+], Menus.prototype, "imgURL", void 0);
 __decorate([
     sequelize_typescript_1.CreatedAt,
     sequelize_typescript_1.Column,
     __metadata("design:type", Date)
-], Restaurants.prototype, "createdAt", void 0);
+], Menus.prototype, "createdAt", void 0);
 __decorate([
     sequelize_typescript_1.UpdatedAt,
     sequelize_typescript_1.Column,
     __metadata("design:type", Date)
-], Restaurants.prototype, "updatedAt", void 0);
-Restaurants = __decorate([
+], Menus.prototype, "updatedAt", void 0);
+Menus = __decorate([
     sequelize_typescript_1.Table
-], Restaurants);
-exports.default = Restaurants;
+], Menus);
+exports.default = Menus;
