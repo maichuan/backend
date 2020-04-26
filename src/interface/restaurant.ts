@@ -20,3 +20,16 @@ export interface Rank {
   resId: number
   score: number
 }
+
+export interface MenuEachDay {
+  id: number
+  name: string
+  price: number
+  quantity: number
+  totalPrice: number
+}
+
+export interface IncomeEachDay {
+  date: string
+  income: number
+}

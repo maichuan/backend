@@ -1,0 +1,6 @@
+runtime: nodejs10
+
+env_variables:
+  PORT: 8080
+  CLOUD_SQL_CONNECTION_NAME: klener:asia-southeast1:kelnersql
+  NOTIFICATION_HOST: https://notification-dot-klener.df.r.appspot.com/
