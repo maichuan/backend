@@ -12,9 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = __importDefault(require("./app"));
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const app = new app_1.default(process.env.PORT || 3000);
-    yield app.listen();
+const sequelize_1 = __importDefault(require("sequelize"));
+const Restaurants_1 = __importDefault(require("../models/Restaurants"));
+exports.getSearch = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const Op = sequelize_1.default.Op;
+    const data = yield Restaurants_1.default.findAll({
+        where: {
+            name: {
+                [Op.like]: '%' + req.query.q + '%',
+            },
+        },
+    });
+    console.log(req.query);
+    return res.json({ restaurants: data });
 });
-main();
+exports.getWord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const word = req.query.q;
+    return res.json(req.query.q);
+});

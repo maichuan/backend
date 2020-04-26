@@ -13,10 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Restaurants_1 = __importDefault(require("../models/Restaurants"));
+const Menus_1 = __importDefault(require("../models/Menus"));
+const RestautantRank_1 = __importDefault(require("../models/RestautantRank"));
+const RestaurantStatistics_1 = __importDefault(require("../models/RestaurantStatistics"));
+const Orders_1 = __importDefault(require("../models/Orders"));
+const date_1 = require("../utils/date");
+const ConfirmOrders_1 = __importDefault(require("../models/ConfirmOrders"));
+const sequelize_1 = require("sequelize");
 exports.getRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const restaurants = yield Restaurants_1.default.findAll();
-        return res.json(restaurants);
+        return res.json({ restaurants });
     }
     catch (e) {
         console.log(e);
@@ -24,7 +31,7 @@ exports.getRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newRestaurant = req.body;
-    console.log(newRestaurant);
+    console.log('REQ', req.body);
     try {
         yield Restaurants_1.default.create(newRestaurant);
         return res.json({
@@ -40,7 +47,14 @@ exports.createRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.getRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     const restaurant = yield Restaurants_1.default.findByPk(id);
-    return res.json(restaurant);
+    const menus = yield Menus_1.default.findAll({
+        where: {
+            restaurantId: id,
+        },
+        raw: true,
+    });
+    const formatMenu = menus.map(m => (Object.assign(Object.assign({}, m), { question: JSON.parse(m.question) })));
+    return res.json(Object.assign(Object.assign({}, JSON.parse(JSON.stringify(restaurant))), { menus: formatMenu }));
 });
 exports.deleteRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
@@ -52,4 +66,132 @@ exports.updateRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const restaurant = req.body;
     yield Restaurants_1.default.update(restaurant, { where: { id } });
     return res.json({ message: 'restaurant updated' });
+});
+exports.getStat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resRank = yield RestautantRank_1.default.findAll();
+        return res.json({ data: resRank });
+    }
+    catch (error) {
+        return res.json({ message: error });
+    }
+});
+exports.postStat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const newStat = req.body;
+    try {
+        yield RestaurantStatistics_1.default.create(newStat);
+        res.json({ message: 'success to post' });
+    }
+    catch (error) {
+        res.json({ message: error });
+    }
+});
+exports.getIncomeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const data = [];
+    const orders = yield Orders_1.default.findAll({
+        order: [['updatedAt', 'DESC']],
+        where: {
+            restaurantId: id,
+        },
+    });
+    let price = 0;
+    let oldDate;
+    orders.map((order) => __awaiter(void 0, void 0, void 0, function* () {
+        const date = date_1.getFullDate(order.updatedAt);
+        if (oldDate === null || oldDate === undefined) {
+            data.push({
+                date,
+                income: order.price,
+            });
+            oldDate = date;
+            price = order.price;
+            console.log(data);
+        }
+        else {
+            console.log('olddate', oldDate);
+            console.log('date', date);
+            if (oldDate === date) {
+                price = price + order.price;
+                data.pop();
+                data.push({
+                    date: oldDate,
+                    income: price,
+                });
+            }
+            else {
+                data.push({
+                    date,
+                    income: order.price,
+                });
+                price = order.price;
+                oldDate = date;
+            }
+        }
+        console.log('data', data);
+    }));
+    return res.json({
+        data,
+    });
+});
+exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const date = Number(req.params.date);
+    console.log(date);
+    const startDay = new Date(date);
+    const endDay = new Date();
+    endDay.setDate(startDay.getDate());
+    endDay.setHours(16, 59, 59, 999);
+    startDay.setDate(startDay.getDate() - 1);
+    startDay.setHours(17, 0, 0, 0);
+    console.log('startDay', startDay);
+    console.log('endDay', endDay);
+    const orderItems = yield ConfirmOrders_1.default.findAll({
+        // order: [['updatedAt', 'DESC']],
+        where: {
+            updatedAt: {
+                [sequelize_1.Op.and]: {
+                    [sequelize_1.Op.gte]: startDay,
+                    [sequelize_1.Op.lte]: endDay,
+                },
+            },
+        },
+        raw: true,
+    });
+    const data = [];
+    // let menuId: number = 0
+    // let quantity = 0
+    // let oldDate = ''
+    yield Promise.all(orderItems.map((item) => __awaiter(void 0, void 0, void 0, function* () {
+        const menu = yield Menus_1.default.findByPk(item.menuId);
+        // let flag = 0
+        if (data.length === 0) {
+            data.push({
+                id: item.menuId,
+                name: menu.name,
+                price: menu.price,
+                quantity: item.quantity,
+                totalPrice: item.quantity * menu.price,
+            });
+        }
+        else {
+            const findItem = data.find(d => d.id === item.menuId);
+            if (findItem) {
+                findItem.quantity = findItem.quantity + item.quantity;
+                findItem.totalPrice = findItem.quantity * findItem.price;
+            }
+            else {
+                data.push({
+                    id: item.menuId,
+                    name: menu.name,
+                    price: menu.price,
+                    quantity: item.quantity,
+                    totalPrice: item.quantity * menu.price,
+                });
+            }
+        }
+        console.log(data.length);
+    })));
+    console.log('last', data.length);
+    return res.json({ data });
 });
