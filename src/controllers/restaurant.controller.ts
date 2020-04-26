@@ -190,7 +190,7 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
   await Promise.all(
     orderItems.map(async item => {
       const menu = await Menus.findByPk(item.menuId)
-      let flag = 0
+      // let flag = 0
       if (data.length === 0) {
         data.push({
           id: item.menuId,
@@ -200,14 +200,11 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
           totalPrice: item.quantity * menu!.price,
         })
       } else {
-        data.map(d => {
-          if (d.id === item.menuId) {
-            d.quantity = d.quantity + item.quantity
-            d.totalPrice = d.quantity * d.price
-            flag = 1
-          }
-        })
-        if (flag === 1) {
+        const findItem = data.find(d => d.id === item.menuId)
+        if (findItem) {
+          findItem.quantity = findItem.quantity + item.quantity
+          findItem.totalPrice = findItem.quantity * findItem.price
+        } else {
           data.push({
             id: item.menuId,
             name: menu!.name,
@@ -215,7 +212,6 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
             quantity: item.quantity,
             totalPrice: item.quantity * menu!.price,
           })
-          flag = 0
         }
       }
       console.log(data.length)
