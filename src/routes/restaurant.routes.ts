@@ -30,10 +30,6 @@ router
 
 router.route('/statistic').get(getStat)
 
-router.route('/summary/:id').get(getIncomeById)
-
-router.route('/summary/:id/:date').get(getMenuEachDay)
-
 router.route('/click').post(postStat)
 
 router
