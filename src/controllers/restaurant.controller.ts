@@ -87,8 +87,9 @@ export const updateRestaurant = async (
   const id = req.params.id
   const restaurant = req.body
   await Restaurants.update(restaurant, { where: { id } })
+  const r = await Restaurants.findByPk(id)
 
-  return res.json({ message: 'restaurant updated' })
+  return res.json({ restaurant: r })
 }
 
 export const getStat = async (req: Request, res: Response) => {
@@ -130,10 +131,7 @@ export const getIncomeById = async (req: Request, res: Response) => {
       })
       oldDate = date
       price = order.price
-      console.log(data)
     } else {
-      console.log('olddate', oldDate)
-      console.log('date', date)
       if (oldDate === date) {
         price = price + order.price
         data.pop()
@@ -150,7 +148,6 @@ export const getIncomeById = async (req: Request, res: Response) => {
         oldDate = date
       }
     }
-    console.log('data', data)
   })
   return res.json({
     data,
@@ -159,9 +156,10 @@ export const getIncomeById = async (req: Request, res: Response) => {
 
 export const getMenuEachDay = async (req: Request, res: Response) => {
   const id = req.params.id
-  const date = Number(req.params.date)
-  console.log(date)
-  const startDay = new Date(date)
+  const date = req.params.date.replace(/\_/g, '/')
+  const dates = date.split('/').map(d => +d)
+
+  const startDay = new Date(dates[2], dates[1] - 1, dates[0])
   const endDay = new Date()
   endDay.setDate(startDay.getDate())
   endDay.setHours(16, 59, 59, 999)
@@ -183,7 +181,7 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
     raw: true,
   })
 
-  const data: MenuEachDay[] = []
+  const menus: MenuEachDay[] = []
   // let menuId: number = 0
   // let quantity = 0
   // let oldDate = ''
@@ -191,8 +189,8 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
     orderItems.map(async item => {
       const menu = await Menus.findByPk(item.menuId)
       // let flag = 0
-      if (data.length === 0) {
-        data.push({
+      if (menus.length === 0) {
+        menus.push({
           id: item.menuId,
           name: menu!.name,
           price: menu!.price,
@@ -200,12 +198,12 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
           totalPrice: item.quantity * menu!.price,
         })
       } else {
-        const findItem = data.find(d => d.id === item.menuId)
+        const findItem = menus.find(d => d.id === item.menuId)
         if (findItem) {
           findItem.quantity = findItem.quantity + item.quantity
           findItem.totalPrice = findItem.quantity * findItem.price
         } else {
-          data.push({
+          menus.push({
             id: item.menuId,
             name: menu!.name,
             price: menu!.price,
@@ -214,9 +212,9 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
           })
         }
       }
-      console.log(data.length)
     }),
   )
-  console.log('last', data.length)
-  return res.json({ data })
+
+  const totalPrice = menus.reduce((prev, cur) => prev + cur.totalPrice, 0)
+  return res.json({ date, menus, totalPrice })
 }
