@@ -65,7 +65,8 @@ exports.updateRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const id = req.params.id;
     const restaurant = req.body;
     yield Restaurants_1.default.update(restaurant, { where: { id } });
-    return res.json({ message: 'restaurant updated' });
+    const r = yield Restaurants_1.default.findByPk(id);
+    return res.json({ restaurant: r });
 });
 exports.getStat = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -106,11 +107,8 @@ exports.getIncomeById = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
             oldDate = date;
             price = order.price;
-            console.log(data);
         }
         else {
-            console.log('olddate', oldDate);
-            console.log('date', date);
             if (oldDate === date) {
                 price = price + order.price;
                 data.pop();
@@ -128,7 +126,6 @@ exports.getIncomeById = (req, res) => __awaiter(void 0, void 0, void 0, function
                 oldDate = date;
             }
         }
-        console.log('data', data);
     }));
     return res.json({
         data,
@@ -136,9 +133,9 @@ exports.getIncomeById = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const date = Number(req.params.date);
-    console.log(date);
-    const startDay = new Date(date);
+    const date = req.params.date.replace(/\_/g, '/');
+    const dates = date.split('/').map(d => +d);
+    const startDay = new Date(dates[2], dates[1] - 1, dates[0]);
     const endDay = new Date();
     endDay.setDate(startDay.getDate());
     endDay.setHours(16, 59, 59, 999);
@@ -158,15 +155,15 @@ exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, functio
         },
         raw: true,
     });
-    const data = [];
+    const menus = [];
     // let menuId: number = 0
     // let quantity = 0
     // let oldDate = ''
     yield Promise.all(orderItems.map((item) => __awaiter(void 0, void 0, void 0, function* () {
         const menu = yield Menus_1.default.findByPk(item.menuId);
         // let flag = 0
-        if (data.length === 0) {
-            data.push({
+        if (menus.length === 0) {
+            menus.push({
                 id: item.menuId,
                 name: menu.name,
                 price: menu.price,
@@ -175,13 +172,13 @@ exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
         }
         else {
-            const findItem = data.find(d => d.id === item.menuId);
+            const findItem = menus.find(d => d.id === item.menuId);
             if (findItem) {
                 findItem.quantity = findItem.quantity + item.quantity;
                 findItem.totalPrice = findItem.quantity * findItem.price;
             }
             else {
-                data.push({
+                menus.push({
                     id: item.menuId,
                     name: menu.name,
                     price: menu.price,
@@ -190,8 +187,7 @@ exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 });
             }
         }
-        console.log(data.length);
     })));
-    console.log('last', data.length);
-    return res.json({ data });
+    const totalPrice = menus.reduce((prev, cur) => prev + cur.totalPrice, 0);
+    return res.json({ date, menus, totalPrice });
 });

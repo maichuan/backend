@@ -14,8 +14,6 @@ router
     .get()
     .post();
 router.route('/statistic').get(restaurant_controller_1.getStat);
-router.route('/summary/:id').get(restaurant_controller_1.getIncomeById);
-router.route('/summary/:id/:date').get(restaurant_controller_1.getMenuEachDay);
 router.route('/click').post(restaurant_controller_1.postStat);
 router
     .route('/:id')
