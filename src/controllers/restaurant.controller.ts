@@ -87,8 +87,9 @@ export const updateRestaurant = async (
   const id = req.params.id
   const restaurant = req.body
   await Restaurants.update(restaurant, { where: { id } })
+  const r = await Restaurants.findByPk(id)
 
-  return res.json({ message: 'restaurant updated' })
+  return res.json({ restaurant: r })
 }
 
 export const getStat = async (req: Request, res: Response) => {
