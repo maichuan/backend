@@ -32,7 +32,6 @@ exports.createCharges = (req, res) => __awaiter(void 0, void 0, void 0, function
             card: tokenId,
         });
         const retrive = yield omise_1.default.charges.retrieve(response.id);
-        console.log(retrive.id);
         // const capture = await omise.charges.capture(response.id)
         // console.log(capture)
         return res.status(200).json({ chargeId: response.id });

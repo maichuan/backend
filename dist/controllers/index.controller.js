@@ -41,7 +41,6 @@ exports.indexWelcome = (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (lat !== undefined && long !== undefined) {
         const latitude = parseFloat(lat);
         const longitude = parseFloat(long);
-        console.log(latitude, longitude);
         const fromCoor = { latitude, longitude };
         const distance = (restaurant) => {
             const toCoor = {

@@ -12,7 +12,6 @@ export const getSearch = async (req: Request, res: Response) => {
       },
     },
   })
-  console.log(req.query)
   return res.json({ restaurants: data })
 }
 

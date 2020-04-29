@@ -30,7 +30,6 @@ export const getRank = async (req: Request, res: Response) => {
 
 export const updateRestaurantRank = async (req: Request, res: Response) => {
   const { token } = req.headers
-  console.log('Update token: ', token)
 
   if (token === 'VARIT') {
     const ranks: Rank[] = []

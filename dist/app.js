@@ -25,6 +25,8 @@ const search_route_1 = __importDefault(require("./routes/search.route"));
 const history_route_1 = __importDefault(require("./routes/history.route"));
 const ordered_routes_1 = __importDefault(require("./routes/ordered.routes"));
 const rank_route_1 = __importDefault(require("./routes/rank.route"));
+const summary_route_1 = __importDefault(require("./routes/summary.route"));
+const qrcode_route_1 = __importDefault(require("./routes/qrcode.route"));
 const database_1 = require("./database");
 class App {
     constructor(port) {
@@ -54,6 +56,8 @@ class App {
         this.app.use('/history', history_route_1.default);
         this.app.use('/ordered', ordered_routes_1.default);
         this.app.use('/rank', rank_route_1.default);
+        this.app.use('/summary', summary_route_1.default);
+        this.app.use('/qrcode', qrcode_route_1.default);
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {
