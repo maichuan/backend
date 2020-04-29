@@ -31,7 +31,6 @@ exports.getRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newRestaurant = req.body;
-    console.log('REQ', req.body);
     try {
         yield Restaurants_1.default.create(newRestaurant);
         return res.json({
@@ -141,8 +140,6 @@ exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, functio
     endDay.setHours(16, 59, 59, 999);
     startDay.setDate(startDay.getDate() - 1);
     startDay.setHours(17, 0, 0, 0);
-    console.log('startDay', startDay);
-    console.log('endDay', endDay);
     const orderItems = yield ConfirmOrders_1.default.findAll({
         // order: [['updatedAt', 'DESC']],
         where: {

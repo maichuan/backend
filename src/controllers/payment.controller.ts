@@ -24,7 +24,6 @@ export const createCharges = async (req: Request, res: Response) => {
     })
 
     const retrive = await omise.charges.retrieve(response.id)
-    console.log(retrive.id)
     // const capture = await omise.charges.capture(response.id)
     // console.log(capture)
     return res.status(200).json({ chargeId: response.id })

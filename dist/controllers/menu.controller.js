@@ -24,8 +24,6 @@ exports.getMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.postMenu = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const menu = req.body;
-    console.log(req.body);
-    console.log(menu);
     yield Menus_1.default.create(menu);
     return res.json({
         message: 'create new menu',

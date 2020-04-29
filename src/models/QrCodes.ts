@@ -22,6 +22,9 @@ export default class QrCodes extends Model<QrCodes> {
   restaurantId!: number
 
   @Column
+  tableno!: string
+
+  @Column
   imgUrl!: string
 
   @CreatedAt

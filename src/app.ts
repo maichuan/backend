@@ -14,6 +14,7 @@ import History from './routes/history.route'
 import Ordered from './routes/ordered.routes'
 import Rank from './routes/rank.route'
 import Summary from './routes/summary.route'
+import Qrcode from './routes/qrcode.route'
 
 import { sequelize } from './database'
 
@@ -50,6 +51,7 @@ export default class App {
     this.app.use('/ordered', Ordered)
     this.app.use('/rank', Rank)
     this.app.use('/summary', Summary)
+    this.app.use('/qrcode', Qrcode)
   }
 
   public async listen() {
