@@ -171,6 +171,7 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
   const orderItems = await ConfirmOrders.findAll({
     // order: [['updatedAt', 'DESC']],
     where: {
+      restaurantId: id,
       updatedAt: {
         [Op.and]: {
           [Op.gte]: startDay,
