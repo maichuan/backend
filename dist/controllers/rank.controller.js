@@ -39,6 +39,9 @@ exports.getRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.json({ data: ranks });
 });
 exports.updateRestaurantRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.get('X-Appengine-Cron')) {
+        console.log('Request from App engine cron');
+    }
     // if (req.headers['X-Appengine-Cron']) {
     const ranks = [];
     const orders = yield Orders_1.default.findAll({
@@ -123,5 +126,5 @@ exports.getTrendRestaurant = () => __awaiter(void 0, void 0, void 0, function* (
         };
         return Object.assign(Object.assign({}, restaurant), { score });
     });
-    return trends.sort((a, b) => b.score - a.score);
+    return trends.sort((a, b) => b.score - a.score).filter(r => r.lat);
 });
