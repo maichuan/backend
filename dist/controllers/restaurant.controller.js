@@ -143,6 +143,7 @@ exports.getMenuEachDay = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const orderItems = yield ConfirmOrders_1.default.findAll({
         // order: [['updatedAt', 'DESC']],
         where: {
+            restaurantId: id,
             updatedAt: {
                 [sequelize_1.Op.and]: {
                     [sequelize_1.Op.gte]: startDay,

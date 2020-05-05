@@ -193,8 +193,43 @@ exports.clearOrderByRestaurantId = (req, res) => __awaiter(void 0, void 0, void 
 exports.pickToCook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { confirmOrderId } = req.body;
     try {
-        yield ConfirmOrders_1.default.update({ status: 1 }, { where: { id: confirmOrderId } });
-        return res.status(200).send({ message: 'completed' });
+        // const nextQueue = await OrderQueues.findOne({
+        //   where: { confirmOrderId },
+        //   order: [['createdAt', 'ASC']],
+        // })
+        // if (nextQueue) {
+        //   await ConfirmOrders.update(
+        //     { status: 1 },
+        //     { where: { id: confirmOrderId } },
+        //   )
+        //   await OrderQueues.destroy({
+        //     where: { id: nextQueue.id },
+        //   })
+        // }
+        const nextQueue = yield OrderQueues_1.default.findOne({
+            where: { confirmOrderId },
+        });
+        if (nextQueue) {
+            yield ConfirmOrders_1.default.update({ status: 1 }, { where: { id: nextQueue.confirmOrderId } });
+            yield OrderQueues_1.default.destroy({
+                where: { id: nextQueue.id },
+            });
+            const orderQueues = yield OrderQueues_1.default.findAll({
+                where: { restaurantId: nextQueue.restaurantId },
+                order: [['createdAt', 'ASC']],
+                raw: true,
+            });
+            orderQueues.map((queue, i) => __awaiter(void 0, void 0, void 0, function* () {
+                return yield OrderQueues_1.default.update({ seq: i + 1 }, {
+                    where: {
+                        restaurantId: queue.restaurantId,
+                        confirmOrderId: queue.confirmOrderId,
+                    },
+                });
+            }));
+            return res.status(200).send({ message: 'completed' });
+        }
+        return res.status(401).send({ message: 'order not found' });
     }
     catch (e) {
         console.log(e);
