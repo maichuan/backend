@@ -228,20 +228,55 @@ export const clearOrderByRestaurantId = async (req: Request, res: Response) => {
 export const pickToCook = async (req: Request, res: Response) => {
   const { confirmOrderId } = req.body
   try {
+    // const nextQueue = await OrderQueues.findOne({
+    //   where: { confirmOrderId },
+    //   order: [['createdAt', 'ASC']],
+    // })
+    // if (nextQueue) {
+    //   await ConfirmOrders.update(
+    //     { status: 1 },
+    //     { where: { id: confirmOrderId } },
+    //   )
+    //   await OrderQueues.destroy({
+    //     where: { id: nextQueue.id },
+    //   })
+    // }
+
     const nextQueue = await OrderQueues.findOne({
       where: { confirmOrderId },
-      order: [['createdAt', 'ASC']],
     })
+
     if (nextQueue) {
       await ConfirmOrders.update(
         { status: 1 },
-        { where: { id: confirmOrderId } },
+        { where: { id: nextQueue.confirmOrderId } },
       )
+
       await OrderQueues.destroy({
         where: { id: nextQueue.id },
       })
+
+      const orderQueues = await OrderQueues.findAll({
+        where: { restaurantId: nextQueue.restaurantId },
+        order: [['createdAt', 'ASC']],
+        raw: true,
+      })
+
+      orderQueues.map(
+        async (queue, i) =>
+          await OrderQueues.update(
+            { seq: i + 1 },
+            {
+              where: {
+                restaurantId: queue.restaurantId,
+                confirmOrderId: queue.confirmOrderId,
+              },
+            },
+          ),
+      )
+      return res.status(200).send({ message: 'completed' })
     }
-    return res.status(200).send({ message: 'completed' })
+    return res.status(401).send({ message: 'order not found' })
   } catch (e) {
     console.log(e)
     return res.status(401).send({ message: 'failed' })
