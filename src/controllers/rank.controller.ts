@@ -29,9 +29,7 @@ export const getRank = async (req: Request, res: Response) => {
 }
 
 export const updateRestaurantRank = async (req: Request, res: Response) => {
-  const { token } = req.headers
-
-  if (token === 'VARIT') {
+  if (req.headers['X-Appengine-Cron']) {
     const ranks: Rank[] = []
     const orders = await Orders.findAll({
       where: {

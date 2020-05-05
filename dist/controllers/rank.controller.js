@@ -39,8 +39,7 @@ exports.getRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.json({ data: ranks });
 });
 exports.updateRestaurantRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { token } = req.headers;
-    if (token === 'VARIT') {
+    if (req.headers['X-Appengine-Cron']) {
         const ranks = [];
         const orders = yield Orders_1.default.findAll({
             where: {

@@ -7,4 +7,5 @@ route
     .route('/')
     .get(rank_controller_1.getRank)
     .post(rank_controller_1.updateRestaurantRank);
+route.route('/update').get(rank_controller_1.updateRestaurantRank);
 exports.default = route;
