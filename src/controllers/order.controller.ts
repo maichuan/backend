@@ -228,7 +228,19 @@ export const clearOrderByRestaurantId = async (req: Request, res: Response) => {
 export const pickToCook = async (req: Request, res: Response) => {
   const { confirmOrderId } = req.body
   try {
-    await ConfirmOrders.update({ status: 1 }, { where: { id: confirmOrderId } })
+    const nextQueue = await OrderQueues.findOne({
+      where: { confirmOrderId },
+      order: [['createdAt', 'ASC']],
+    })
+    if (nextQueue) {
+      await ConfirmOrders.update(
+        { status: 1 },
+        { where: { id: confirmOrderId } },
+      )
+      await OrderQueues.destroy({
+        where: { id: nextQueue.id },
+      })
+    }
     return res.status(200).send({ message: 'completed' })
   } catch (e) {
     console.log(e)
