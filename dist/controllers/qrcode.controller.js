@@ -12,20 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = __importDefault(require("sequelize"));
-const Restaurants_1 = __importDefault(require("../models/Restaurants"));
-exports.getSearch = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const Op = sequelize_1.default.Op;
-    const data = yield Restaurants_1.default.findAll({
-        where: {
-            name: {
-                [Op.like]: '%' + req.query.q + '%',
-            },
-        },
-    });
-    return res.json({ restaurants: data });
+const QrCodes_1 = __importDefault(require("../models/QrCodes"));
+exports.getQrcodes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { restaurantId } = req.params;
+    const qrcodes = yield QrCodes_1.default.findAll({ where: { restaurantId }, raw: true });
+    return res.json({ qrcodes });
 });
-exports.getWord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const word = req.query.q;
-    return res.json(req.query.q);
+exports.createQrCodes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { restaurantId } = req.params;
+    const data = req.body;
+    try {
+        yield QrCodes_1.default.create(data);
+        const qrcodes = yield QrCodes_1.default.findAll({
+            where: { restaurantId },
+            raw: true,
+        });
+        return res.json({ qrcodes });
+    }
+    catch (e) {
+        return res.status(500).json({ message: 'Cannot create new Qrcode' });
+    }
 });

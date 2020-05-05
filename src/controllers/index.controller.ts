@@ -31,7 +31,6 @@ export const indexWelcome = async (
   if (lat !== undefined && long !== undefined) {
     const latitude = parseFloat(lat)
     const longitude = parseFloat(long)
-    console.log(latitude, longitude)
     const fromCoor: GeolibInputCoordinates = { latitude, longitude }
 
     const distance = (restaurant: Restaurant) => {

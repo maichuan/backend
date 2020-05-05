@@ -20,8 +20,6 @@ export const postMenu = async (
   res: Response,
 ): Promise<Response> => {
   const menu: Menu = req.body
-  console.log(req.body)
-  console.log(menu)
 
   await Menus.create(menu)
   return res.json({

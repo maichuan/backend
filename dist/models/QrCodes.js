@@ -30,6 +30,10 @@ __decorate([
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
+], QrCodes.prototype, "tableno", void 0);
+__decorate([
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
 ], QrCodes.prototype, "imgUrl", void 0);
 __decorate([
     sequelize_typescript_1.CreatedAt,

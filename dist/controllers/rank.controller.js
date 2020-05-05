@@ -40,7 +40,6 @@ exports.getRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.updateRestaurantRank = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { token } = req.headers;
-    console.log('Update token: ', token);
     if (token === 'VARIT') {
         const ranks = [];
         const orders = yield Orders_1.default.findAll({

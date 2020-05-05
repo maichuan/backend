@@ -32,7 +32,6 @@ export const getRestaurants = async (
 
 export const createRestaurant = async (req: Request, res: Response) => {
   const newRestaurant: Restaurant = req.body
-  console.log('REQ', req.body)
 
   try {
     await Restaurants.create(newRestaurant)
@@ -166,8 +165,6 @@ export const getMenuEachDay = async (req: Request, res: Response) => {
   startDay.setDate(startDay.getDate() - 1)
   startDay.setHours(17, 0, 0, 0)
 
-  console.log('startDay', startDay)
-  console.log('endDay', endDay)
   const orderItems = await ConfirmOrders.findAll({
     // order: [['updatedAt', 'DESC']],
     where: {

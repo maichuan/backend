@@ -2,3 +2,4 @@ cron:
   - description: "update daily trend"
     url: /rank
     schedule: every day 00:01
+    timezone: Asia/Bangkok
