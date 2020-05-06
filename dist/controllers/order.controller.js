@@ -155,7 +155,11 @@ exports.getOrderByRestaurantId = (req, res) => __awaiter(void 0, void 0, void 0,
             return Object.assign(Object.assign({}, c), { name: menu.name });
         })));
         const formatOrder = ordersWithName.map(item => {
-            return Object.assign(Object.assign({}, item), { details: JSON.parse(item.details) });
+            const orderDetail = orders.find(order => order.id === item.orderId) || {
+                type: -1,
+                table: -1,
+            };
+            return Object.assign(Object.assign({}, item), { details: JSON.parse(item.details), orderType: orderDetail.type, tableno: orderDetail.table });
         });
         return res.json({ data: formatOrder });
     }
