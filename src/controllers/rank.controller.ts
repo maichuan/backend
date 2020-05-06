@@ -29,72 +29,71 @@ export const getRank = async (req: Request, res: Response) => {
 }
 
 export const updateRestaurantRank = async (req: Request, res: Response) => {
-  const { token } = req.headers
-
-  if (token === 'VARIT') {
-    const ranks: Rank[] = []
-    const orders = await Orders.findAll({
-      where: {
-        updatedAt: {
-          [Op.and]: {
-            [Op.gte]: moment()
-              .subtract(1, 'days')
-              .startOf('day')
-              .subtract(7, 'hours')
-              .toDate(),
-            [Op.lte]: moment().toDate(),
-          },
-        },
-      },
-      raw: true,
-    })
-    const numclick = await RestaurantStatistics.findAll({
-      where: {
-        createdAt: {
-          [Op.and]: {
-            [Op.gte]: moment()
-              .subtract(1, 'days')
-              .startOf('day')
-              .subtract(7, 'hours')
-              .toDate(),
-            [Op.lte]: moment().toDate(),
-          },
-        },
-      },
-      raw: true,
-    })
-
-    orders.map(async order => {
-      const rankIndex = ranks.findIndex(
-        rank => rank.resId === order.restaurantId,
-      )
-      if (rankIndex >= 0) {
-        ranks[rankIndex] = {
-          ...ranks[rankIndex],
-          score: ranks[rankIndex].score + 3,
-        }
-      } else {
-        ranks.push({ resId: order.restaurantId, score: 3 })
-      }
-    })
-
-    numclick.map(async click => {
-      const rankIndex = ranks.findIndex(
-        rank => rank.resId === Number.parseInt(click.resId, 10),
-      )
-      if (rankIndex >= 0) {
-        ranks[rankIndex] = {
-          ...ranks[rankIndex],
-          score: ranks[rankIndex].score + 1,
-        }
-      } else {
-        ranks.push({ resId: Number.parseInt(click.resId, 10), score: 1 })
-      }
-    })
-    await RestaurantRank.bulkCreate(ranks)
-    return res.status(200).send({ message: 'Update complete' })
+  if (req.get('X-Appengine-Cron')) {
+    console.log('Request from App engine cron')
   }
-  return res.status(401).send({ message: 'Resquest without token' })
+  // if (req.headers['X-Appengine-Cron']) {
+  const ranks: Rank[] = []
+  const orders = await Orders.findAll({
+    where: {
+      updatedAt: {
+        [Op.and]: {
+          [Op.gte]: moment()
+            .subtract(1, 'days')
+            .startOf('day')
+            .subtract(7, 'hours')
+            .toDate(),
+          [Op.lte]: moment().toDate(),
+        },
+      },
+    },
+    raw: true,
+  })
+  const numclick = await RestaurantStatistics.findAll({
+    where: {
+      createdAt: {
+        [Op.and]: {
+          [Op.gte]: moment()
+            .subtract(1, 'days')
+            .startOf('day')
+            .subtract(7, 'hours')
+            .toDate(),
+          [Op.lte]: moment().toDate(),
+        },
+      },
+    },
+    raw: true,
+  })
+
+  orders.map(async order => {
+    const rankIndex = ranks.findIndex(rank => rank.resId === order.restaurantId)
+    if (rankIndex >= 0) {
+      ranks[rankIndex] = {
+        ...ranks[rankIndex],
+        score: ranks[rankIndex].score + 3,
+      }
+    } else {
+      ranks.push({ resId: order.restaurantId, score: 3 })
+    }
+  })
+
+  numclick.map(async click => {
+    const rankIndex = ranks.findIndex(
+      rank => rank.resId === Number.parseInt(click.resId, 10),
+    )
+    if (rankIndex >= 0) {
+      ranks[rankIndex] = {
+        ...ranks[rankIndex],
+        score: ranks[rankIndex].score + 1,
+      }
+    } else {
+      ranks.push({ resId: Number.parseInt(click.resId, 10), score: 1 })
+    }
+  })
+  await RestaurantRank.bulkCreate(ranks)
+  return res.status(200).send({ message: 'Update complete' })
+  // }
+  // return res.status(401).send({ message: 'Resquest without token' })
 }
 
 export const getTrendRestaurant = async () => {
@@ -130,5 +129,5 @@ export const getTrendRestaurant = async () => {
     return { ...restaurant, score }
   })
 
-  return trends.sort((a, b) => b.score - a.score)
+  return trends.sort((a, b) => b.score - a.score).filter(r => r.lat)
 }

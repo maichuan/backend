@@ -8,4 +8,6 @@ route
   .get(getRank)
   .post(updateRestaurantRank)
 
+route.route('/update').get(updateRestaurantRank)
+
 export default route
