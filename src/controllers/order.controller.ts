@@ -179,7 +179,16 @@ export const getOrderByRestaurantId = async (req: Request, res: Response) => {
     )
 
     const formatOrder = ordersWithName.map(item => {
-      return { ...item, details: JSON.parse(item.details) }
+      const orderDetail = orders.find(order => order.id === item.orderId) || {
+        type: -1,
+        table: -1,
+      }
+      return {
+        ...item,
+        details: JSON.parse(item.details),
+        orderType: orderDetail.type,
+        tableno: orderDetail.table,
+      }
     })
     return res.json({ data: formatOrder })
   }
